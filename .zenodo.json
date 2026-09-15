@@ -1,0 +1,24 @@
+{
+  "title": "SkillMutator: Benchmarking and Defending Language-and-Code Cross-modal Attacks on LLM Agent Skills",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "MIT",
+  "version": "v1.0.0",
+  "description": "Artifact for the ACSAC 2026 paper \"SkillMutator: Benchmarking and Defending Language-and-Code Cross-modal Attacks on LLM Agent Skills.\" The bundle reproduces every paper table and figure (Tables III-XI, Figures 4-6) from bundled scanner-verdict data via per-claim run.sh scripts that check recomputed metrics against machine-readable golden values, and it ships the end-to-end code (SkillMutator mutation pipeline and the fine-tuning framework) for full live regeneration. Tier 1 claim verification runs on public research infrastructure (any CPU, no GPU, no API key); full end-to-end reproduction additionally needs an NVIDIA A100 80 GB and an OpenAI API key. Adversarial (mutated) Agent Skills are included only as scanner inputs for install-time detection research and must be used in an isolated environment; injected malicious instruction text is not redistributed (verdicts and aggregates only).",
+  "creators": [
+    { "name": "Kim, Youngduk", "affiliation": "KAIST" },
+    { "name": "Song, Minkyoo", "affiliation": "KAIST" },
+    { "name": "Shin, Seungwon", "affiliation": "KAIST" }
+  ],
+  "keywords": [
+    "LLM agents",
+    "agent skills",
+    "prompt injection",
+    "cross-modal attacks",
+    "security scanners",
+    "adversarial robustness",
+    "LoRA fine-tuning",
+    "artifact evaluation",
+    "ACSAC 2026"
+  ]
+}
