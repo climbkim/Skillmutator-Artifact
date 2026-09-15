@@ -1,0 +1,7 @@
+scanner,n_skills,skills_with_findings,frac_with_findings_pct,mean_findings,median_findings,max_findings,total_findings
+skill-security-scan (Total Issues),17,9,52.94117647058823,18.18,3,190,309
+skill-security-scan (Critical only),17,9,52.94117647058823,16.35,1,190,278
+Snyk Agent Scan (HIGH severity),17,4,23.529411764705884,0.35,0,2,6
+LLM scanner GPT-4o-mini (finding_count),17,17,100.0,6.82,7,9,116
+LLM scanner GPT-5.4-mini (finding_count),17,17,100.0,7.65,7,22,130
+LLM scanner GPT-5.4 (finding_count),17,12,70.58823529411765,6.65,8,14,113

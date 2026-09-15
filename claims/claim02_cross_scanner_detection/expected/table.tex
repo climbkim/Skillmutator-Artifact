@@ -1,0 +1,34 @@
+% Table IV — Cross-Scanner Detection Matrix (paper L707-735, current canonical)
+% Source: derived/table3_aggregate.csv
+% Paper Table IV (tab:cross_matrix) reports three GPT adversarial-oracle datasets
+% (GPT-4o-mini n=48, GPT-5.4-mini n=63, GPT-5.4 n=76).
+
+\begin{table}[t]
+\centering
+\caption{Cross-scanner detection rate (\%) across three adversarial-oracle datasets.}
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lrrr}
+\toprule
+\multirow{2}{*}{\textbf{Scanner}} & \multicolumn{3}{c}{\textbf{Adversarial Oracle Dataset}} \
+\cmidrule(lr){2-4}
+ & \textbf{GPT-4o-mini} & \textbf{GPT-5.4-mini} & \textbf{GPT-5.4} \
+ & ($n{=}48$) & ($n{=}63$) & ($n{=}76$) \
+\midrule
+\multicolumn{4}{l}{\textit{Rule-based / Commercial}} \
+\texttt{skill-security-scan}            &  2.08\% &  6.35\% &  7.89\% \
+Snyk Agent Scan                         & 16.67\% &  9.52\% &  9.21\% \
+SkillScan API                           &  0.00\% &  0.00\% &  1.32\% \
+\midrule
+\multicolumn{4}{l}{\textit{Off-the-shelf PI Detectors (inject input)}} \
+LLM-Guard~\cite{llmguard}               &  0.00\% &  0.00\% &  3.95\% \
+PIGuard~\cite{li2025piguard}            & 39.58\% &  4.76\% & 17.11\% \
+DataSentinel~\cite{liu2025datasentinel} &  4.17\% & 11.11\% & 10.53\% \
+\midrule
+\multicolumn{4}{l}{\textit{Proprietary LLM}} \
+GPT-4o-mini                             & 35.42\% &  9.52\% & 23.68\% \
+GPT-5.4-mini                            & 79.17\% & 71.43\% & 78.95\% \
+GPT-5.4                                 & \textbf{89.58\%} & \textbf{88.89\%} & \textbf{86.84\%} \
+\bottomrule
+\end{tabular}
+}
+\end{table}

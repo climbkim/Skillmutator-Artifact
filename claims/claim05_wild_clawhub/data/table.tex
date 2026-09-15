@@ -1,0 +1,21 @@
+% Table VII — In-the-wild ClawHub evaluation (verified against paper)
+% Source: derived/_judge_per_skill.csv (recomputed by scripts/verify_paper_match.py)
+\begin{table}[t]
+\centering
+\caption{In-the-wild ClawHub evaluation \
+($n{=}200$, 100 \texttt{clean} + 100 \texttt{suspicious} balanced across four severity tiers, 25 each).}
+\label{tab:wild_eval}
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{} l c c c c c @{}}
+\toprule
+ &  & \multicolumn{4}{c}{\texttt{suspicious}} \
+ \cmidrule(lr){3-6}
+                 & \texttt{clean} & LOW & MED & HIGH & CRIT \
+\midrule
+Accuracy (\%) & {92.0\%} & 60.0\% & 68.0\% & {84.0\%} & 80.0\% \
+\midrule
+{Aggregate} & \multicolumn{5}{@{}l}{Accuracy={82.5\%}, \ \ FPR={8.0\%}} \
+\bottomrule
+\end{tabular}
+\end{table}

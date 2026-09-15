@@ -1,0 +1,42 @@
+{
+  "paper_element": "Table III (tab:refusal_i4_summary) — oracle refusal behavior across 3 GPT oracles. Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
+  "source": "Skillmutator.tex \\label{tab:refusal_i4_summary} (paper L753-775)",
+  "metrics": {
+    "gpt-4o-mini/n": 51,
+    "gpt-4o-mini/rate_pct": 23.53,
+    "gpt-4o-mini/per_iter0": 4,
+    "gpt-4o-mini/per_iter1": 12,
+    "gpt-4o-mini/per_iter2": 14,
+    "gpt-4o-mini/per_iter3": 11,
+    "gpt-4o-mini/per_iter4": 12,
+    "gpt-4o-mini/iter4_silent": 2,
+    "gpt-4o-mini/iter4_explicit": 0,
+    "gpt-4o-mini/iter4_partial": 10,
+    "gpt-5.4-mini/n": 63,
+    "gpt-5.4-mini/rate_pct": 42.86,
+    "gpt-5.4-mini/per_iter0": 0,
+    "gpt-5.4-mini/per_iter1": 15,
+    "gpt-5.4-mini/per_iter2": 22,
+    "gpt-5.4-mini/per_iter3": 22,
+    "gpt-5.4-mini/per_iter4": 27,
+    "gpt-5.4-mini/iter4_silent": 23,
+    "gpt-5.4-mini/iter4_explicit": 4,
+    "gpt-5.4-mini/iter4_partial": 0,
+    "gpt-5.4/n": 76,
+    "gpt-5.4/rate_pct": 9.21,
+    "gpt-5.4/per_iter0": 0,
+    "gpt-5.4/per_iter1": 4,
+    "gpt-5.4/per_iter2": 4,
+    "gpt-5.4/per_iter3": 8,
+    "gpt-5.4/per_iter4": 7,
+    "gpt-5.4/iter4_silent": 0,
+    "gpt-5.4/iter4_explicit": 0,
+    "gpt-5.4/iter4_partial": 7
+  },
+  "tolerance_pp": {
+    "_default": 0,
+    "gpt-4o-mini/rate_pct": 0.05,
+    "gpt-5.4-mini/rate_pct": 0.05,
+    "gpt-5.4/rate_pct": 0.05
+  }
+}

@@ -1,0 +1,5 @@
+base_model,base_detected,base_total,base_pct,finetuned_noprefill_detected,finetuned_noprefill_total,finetuned_noprefill_pct,finetuned_prefill_detected,finetuned_prefill_total,finetuned_prefill_pct
+Qwen2.5-Coder-7B-Instruct,13,76,17.1,60,76,78.9,67,76,88.2
+Llama-3.1-8B-Instruct,6,65,9.2,63,76,82.9,57,76,75.0
+Mistral-7B-Instruct-v0.3,4,76,5.3,55,76,72.4,42,76,55.3
+Gemma-2-9b-it,8,76,10.5,45,76,59.2,43,76,56.6

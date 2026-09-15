@@ -1,0 +1,34 @@
+{
+  "paper_element": "Figure 6 (fig:rq3_finding1) — scanner detection on the GPT-5.4 oracle benchmark (n=76, select mode, GPT-5.4 judge). Per scanner: '<name>/det' = detected count, '<name>/rate' = detection rate (%). Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
+  "source": "Skillmutator.tex fig:rq3_finding1. Rates recomputed as 100 * detected / n with n read from the golden.",
+  "n": 76,
+  "metrics": {
+    "skill-security-scan/det": 6,
+    "skill-security-scan/rate": 7.89,
+    "Snyk Agent Scan/det": 7,
+    "Snyk Agent Scan/rate": 9.21,
+    "SkillScan/det": 1,
+    "SkillScan/rate": 1.32,
+    "GPT-4o-mini/det": 18,
+    "GPT-4o-mini/rate": 23.68,
+    "GPT-5.4-mini/det": 60,
+    "GPT-5.4-mini/rate": 78.95,
+    "GPT-5.4/det": 66,
+    "GPT-5.4/rate": 86.84,
+    "Qwen2.5-Coder-7B-Instruct (base)/det": 13,
+    "Qwen2.5-Coder-7B-Instruct (base)/rate": 17.11,
+    "Qwen2.5-Coder-7B-Instruct (ours)/det": 67,
+    "Qwen2.5-Coder-7B-Instruct (ours)/rate": 88.16
+  },
+  "tolerance_pp": {
+    "_default": 0.02,
+    "skill-security-scan/det": 0,
+    "Snyk Agent Scan/det": 0,
+    "SkillScan/det": 0,
+    "GPT-4o-mini/det": 0,
+    "GPT-5.4-mini/det": 0,
+    "GPT-5.4/det": 0,
+    "Qwen2.5-Coder-7B-Instruct (base)/det": 0,
+    "Qwen2.5-Coder-7B-Instruct (ours)/det": 0
+  }
+}

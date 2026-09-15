@@ -1,0 +1,16 @@
+{
+  "paper_element": "Table VI (tab:finetune_rq2, Finding 6) — four-phase training-schema ablation: detection rate as each phase is added, then deterministic refinement, then forced Phase-4-header prefilling. Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
+  "source": "Skillmutator.tex \\label{tab:finetune_rq2}",
+  "metrics": {
+    "Phase 1 (Purpose Grounding)": 1.32,
+    "+ Phase 2 (Out-of-Scope Detection)": 25.00,
+    "+ Phase 3 (Principle Reasoning)": 57.89,
+    "+ Phase 4 (Category Labeling)": 67.11,
+    "+ deterministic refinement": 78.95,
+    "+ prefill (Phase 4 header forced)": 88.16,
+    "delta/schema (P3->P4)": 9.22,
+    "delta/refine (P4->+refine)": 11.84,
+    "delta/prefill (+refine->+prefill)": 9.21
+  },
+  "tolerance_pp": 0.1
+}

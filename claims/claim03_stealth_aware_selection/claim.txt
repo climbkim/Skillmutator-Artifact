@@ -1,0 +1,16 @@
+Paper element: Table V
+Source bundle: table5_select_vs_noselect
+
+Claim
+-----
+Stealth-aware attack selection lowers scanner detection relative to no-select
+mutation on the same host skills: across all six scanners (skill-security-scan,
+Snyk, SkillScan, and the GPT-4o-mini/GPT-5.4-mini/GPT-5.4 LLM scanners), every
+scanner detects fewer select-mode mutations than no-select ones, for a 7.1 pp
+average detection drop (select 34.7% vs no-select 41.7%).
+
+How this claim is checked
+-------------------------
+Run ./run.sh. It regenerates the aggregate from the raw data in
+data/ and compares the result against the values cited in the
+paper (expected/PAPER_CITED_VALUES.md).

@@ -1,0 +1,5 @@
+oracle,mode,total_scenarios,normal,explicit_refusal,silent_failure,partial_refusal,any_refusal,any_refusal_rate_pct
+gpt-4o-mini,select,51,38,0,2,11,30,58.82
+gpt-5.4-mini,select,63,36,4,23,0,32,50.79
+gpt-5.4,select,76,69,0,0,7,13,17.11
+gpt-5.4,no-select,221,198,0,4,19,41,18.55

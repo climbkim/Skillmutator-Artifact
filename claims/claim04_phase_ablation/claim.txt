@@ -1,0 +1,12 @@
+Paper element: Table VI
+Source bundle: table7_phase_ablation
+
+Claim
+-----
+The four-phase schema yields monotonic, attributable gains per phase; deterministic refinement adds +11.9 pp.
+
+How this claim is checked
+-------------------------
+Run ./run.sh. It regenerates the aggregate from the raw data in
+data/ and compares the result against the values cited in the
+paper (expected/PAPER_CITED_VALUES.md).

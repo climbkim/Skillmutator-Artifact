@@ -1,0 +1,12 @@
+Paper element: Figure 5
+Source bundle: figure5_prefill_delta_comparison
+
+Claim
+-----
+Phase-4 prefilling is model-dependent: it raises detection for the code-specialized Qwen (79.0->88.2%, +9.2pp) but reduces it for Llama, Mistral, and Gemma; both the GPT-5.4 and Claude-Opus-4.7 judges show the same pattern (Finding 5). Prefill is a model-specific decoding aid, not a universally beneficial component.
+
+How this claim is checked
+-------------------------
+Run ./run.sh. It verifies the bundled aggregate against the paper-cited
+values in expected/PAPER_CITED_VALUES.md (within tolerance) and prints the
+match result.

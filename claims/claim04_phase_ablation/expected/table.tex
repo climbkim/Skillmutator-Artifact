@@ -1,0 +1,23 @@
+% Table VI — 4-Phase Schema Ablation (paper L879-897, 4-section consistent chain)
+% Source: judge/{P0,P01,P012,B3_d11_4sect_ALT,D3_canonical}_{noprefill,prefill}.csv
+% Aggregator: scripts/build_table7.py → derived/table7_aggregate.csv
+
+\begin{table}[t]
+\centering
+\caption{4-Phase schema ablation on Qwen2.5-Coder-7B-Instruct.}
+\label{tab:finetune_rq2}
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lrr}
+\toprule
+\textbf{Schema} & \textbf{Detection Rate} & \textbf{$\Delta$} \\
+\midrule
+Phase 1 (Purpose only)                                  &  1.32\% & ---                  \\
++ Phase 2 (Added scope)                                 & 25.00\% & $+23.7\text{\,pp}$   \\
++ Phase 3 (Principle violations)                        & 57.89\% & $+32.9\text{\,pp}$   \\
++ Phase 4 (Category mapping)                            & 67.11\% & $+9.2\text{\,pp}$    \\
+\;\;{\small + deterministic refine}                     & 78.95\% & $+11.8\text{\,pp}$   \\
+\;\;{\small + prefill (Phase 4 header forced)}          & 88.16\% & $+9.2\text{\,pp}$    \\
+\bottomrule
+\end{tabular}
+}
+\end{table}

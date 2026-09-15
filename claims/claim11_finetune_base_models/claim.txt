@@ -1,0 +1,12 @@
+Paper element: Figure 5
+Source bundle: table6_finetune_base_models
+
+Claim
+-----
+Reasoning-trajectory distillation improves detection across four base model families, with Qwen2.5-Coder-7B strongest.
+
+How this claim is checked
+-------------------------
+Run ./run.sh. It regenerates the aggregate from the raw data in
+data/ and compares the result against the values cited in the
+paper (expected/PAPER_CITED_VALUES.md).

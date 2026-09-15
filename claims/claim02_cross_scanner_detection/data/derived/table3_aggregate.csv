@@ -1,0 +1,10 @@
+scanner,gpt-4o-mini_det,gpt-4o-mini_n,gpt-4o-mini_rate,gpt-5.4-mini_det,gpt-5.4-mini_n,gpt-5.4-mini_rate,gpt-5.4_det,gpt-5.4_n,gpt-5.4_rate
+skill-security-scan,1,48,2.08,4,63,6.35,6,76,7.89
+Snyk Agent Scan,8,48,16.67,6,63,9.52,7,76,9.21
+SkillScan API,0,48,0.00,0,63,0.00,1,76,1.32
+LLM-Guard,1,48,2.08,0,63,0.00,3,76,3.95
+PIGuard,19,48,39.58,3,63,4.76,13,76,17.11
+DataSentinel,2,48,4.17,7,63,11.11,8,76,10.53
+GPT-4o-mini,17,48,35.42,6,63,9.52,18,76,23.68
+GPT-5.4-mini,38,48,79.17,45,63,71.43,60,76,78.95
+GPT-5.4,43,48,89.58,56,63,88.89,66,76,86.84

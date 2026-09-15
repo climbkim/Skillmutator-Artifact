@@ -1,0 +1,26 @@
+{
+  "paper_element": "Table VIII (tab:cost_envelope, Finding 4) — per-scan operating cost on the GPT-5.4 oracle benchmark (n=76): $/skill, recall %, and $/detected per scanner, plus the argmin (cheapest $/detected). Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
+  "source": "Skillmutator.tex \\label{tab:cost_envelope}",
+  "metrics": {
+    "Qwen-7B + ours/$per_skill": 0.00414,
+    "Qwen-7B + ours/recall": 88.16,
+    "Qwen-7B + ours/$per_detected": 0.00469,
+    "GPT-4o-mini/$per_skill": 0.00178,
+    "GPT-4o-mini/recall": 23.68,
+    "GPT-4o-mini/$per_detected": 0.00753,
+    "GPT-5.4-mini/$per_skill": 0.00664,
+    "GPT-5.4-mini/recall": 78.95,
+    "GPT-5.4-mini/$per_detected": 0.00841,
+    "GPT-5.4/$per_skill": 0.02754,
+    "GPT-5.4/recall": 86.84,
+    "GPT-5.4/$per_detected": 0.03171,
+    "lowest/$per_detected": 0.00469
+  },
+  "tolerance_pp": {
+    "_default": 0.00005,
+    "Qwen-7B + ours/recall": 0.02,
+    "GPT-4o-mini/recall": 0.02,
+    "GPT-5.4-mini/recall": 0.02,
+    "GPT-5.4/recall": 0.02
+  }
+}

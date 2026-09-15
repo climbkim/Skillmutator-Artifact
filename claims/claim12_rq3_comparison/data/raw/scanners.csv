@@ -1,0 +1,9 @@
+label,detected,rate_pct,group
+skill-security-scan,6,7.89,rule
+Snyk Agent Scan,7,9.21,rule
+SkillScan,1,1.32,rule
+GPT-4o-mini,18,23.68,proprietary
+GPT-5.4-mini,60,78.95,proprietary
+GPT-5.4,66,86.84,proprietary
+Qwen2.5-Coder-7B-Instruct (base),13,17.11,ours_base
+Qwen2.5-Coder-7B-Instruct (ours),67,88.16,ours_ft

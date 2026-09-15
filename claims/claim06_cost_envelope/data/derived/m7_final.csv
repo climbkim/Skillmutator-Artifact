@@ -1,0 +1,5 @@
+scanner,harness,n,med_in_tok,med_out_tok,mean_in_tok,mean_out_tok,med_cost_usd,recall_pct,cost_per_detected_usd,source
+GPT-4o-mini,A,76,8250,913,16240,910,0.001783275,23.68,0.0075307221283783775,Skillmutator-data raw scan.md (direct API usage)
+GPT-5.4-mini,A,76,8419,1892,16844,1914,0.006642749999999999,78.95,0.008413869537682077,Skillmutator-data raw scan.md (direct API usage)
+GPT-5.4,A*,76,8246,1117,16236,1178,0.027538125,86.84,0.03171133694150161,input=tiktoken (Harness A reconstruction); output=D8 API direct measurement
+Qwen-7B + ours,B,76,12063,859,13084,1062,0.004137222222222223,88.16,0.004692856422665861,Paper_data/qwen-d3 prefill (paper §6.4 88.16% canonical); cost = wall-clock latency × A100 80GB on-demand $1.79/hr

@@ -1,0 +1,12 @@
+{
+  "paper_element": "Table XI / tab:cell_metrics (Appendix B) — cell-level confusion matrix for the fine-tuned Qwen2.5-Coder-7B scanner (prefill, GPT-5.4 oracle, n_mut=76, n_unmod=221; TP=67 FP=43 FN=9 TN=178). Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
+  "source": "Skillmutator.tex \\label{tab:cell_metrics}",
+  "metrics": {
+    "Sensitivity/Recall": 88.16,
+    "Specificity": 80.54,
+    "Precision": 60.91,
+    "F1": 72.04,
+    "Balanced Acc": 84.35
+  },
+  "tolerance_pp": 0.05
+}

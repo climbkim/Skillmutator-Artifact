@@ -1,0 +1,82 @@
+# ACSAC 2026 Artifact Evaluation metadata — generated in artmeta (github.com/jelenamirkovic/artmeta) flat-key format.
+# Regenerate/verify with: python artmeta.py  (it reads this file back and lets you edit answers).
+
+badge = "r"
+artifact_url = "https://github.com/climbkim/SkillMutator-Artifact"
+cd = "c"
+citation = """
+@inproceedings{kim2026skillmutator,
+  title     = {SkillMutator: Benchmarking and Defending Language-and-Code Cross-modal Attacks on LLM Agent Skills},
+  author    = {Kim, Youngduk and Song, Minkyoo and Shin, Seungwon},
+  booktitle = {Annual Computer Security Applications Conference (ACSAC)},
+  year      = {2026}
+}"""
+license_url = "https://opensource.org/licenses/MIT"
+infrastructure_url = "https://colab.research.google.com/"
+infrastructure_resources = "https://github.com/climbkim/SkillMutator-Artifact/blob/main/infrastructure/infrastructure.json"
+infrastructure_allocation = "The proposed evaluation (Tier 1 claim verification) needs NO allocation: it runs on public research infrastructure (free Google Colab CPU runtime, any CloudLab/Chameleon/FABRIC/SPHERE CPU node, or a minimal 1-CPU/2-GB/10-GB Linux VM) with no GPU, API key, or network. Full end-to-end reproduction is an optional, justified constraint that additionally needs a reviewer-provided NVIDIA A100 80 GB (a rented cloud A100 or an institutional GPU server) plus a paid OpenAI API key; on request the authors provide anonymous reviewer SSH access to a preconfigured A100 box (climbkim@kaist.ac.kr). See infrastructure/resources and infrastructure/allocation."
+install_script = "https://github.com/climbkim/SkillMutator-Artifact/blob/main/install.sh"
+use = "Intended only as scanner inputs for install-time detection research on Agent Skills, in an isolated environment. NOT suitable for installing or executing the mutated skills against a live agent, and not a general-purpose skill repository. The bundled judge outputs support claim verification without API keys or a GPU; full regeneration additionally requires an OpenAI API key and a GPU."
+destructive = "The benchmark under artifact/data/ contains adversarial (mutated) Agent Skills with injected malicious instructions (e.g., data-exfiltration directives embedded in SKILL.md). They must be used only as scanner inputs in an isolated environment; do not install or execute them against a live agent or on a machine with sensitive data."
+# Verification (all claims): each run.sh recomputes from bundled verdicts and checks
+# expected/metrics.json within tolerance, printing ALL MATCH; expectedN is the headline value.
+claim1 = "[Table III] Safety-refusal rates during mutation generation differ across oracles; GPT-5.4-mini refuses most often."
+script1 = "https://github.com/climbkim/SkillMutator-Artifact/blob/main/claims/claim01_oracle_refusal/run.sh"
+expected1 = "PASS: refusal 23.5/42.9/9.2% (4o-mini/5.4-mini/5.4)."
+claim2 = "[Table IV] Across the three GPT adversarial-oracle datasets (n=48/63/76), rule-based and commercial scanners detect only 0-17% of SkillMutator mutations (Finding 1); published prompt-injection detectors remain low at 0-40% (Finding 2, PIGuard peaks at 39.6% on GPT-4o-mini)."
+script2 = "https://github.com/climbkim/SkillMutator-Artifact/blob/main/claims/claim02_cross_scanner_detection/run.sh"
+expected2 = "PASS: 27/27 cells; rule-based 0-17%, GPT-5.4 up to 86.8%."
+claim3 = "[Table V] Stealth-aware attack selection lowers scanner detection relative to no-select mutation on the same host skills."
+script3 = "https://github.com/climbkim/SkillMutator-Artifact/blob/main/claims/claim03_stealth_aware_selection/run.sh"
+expected3 = "PASS: select < no-select per scanner; avg delta +7.1pp."
+claim4 = "[Table VI] The four-phase schema yields monotonic, attributable gains per phase; deterministic refinement adds +11.9 pp (Finding 6)."
+script4 = "https://github.com/climbkim/SkillMutator-Artifact/blob/main/claims/claim04_phase_ablation/run.sh"
+expected4 = "PASS: per-phase 1.3/25.0/57.9/67.1/79.0/88.2%."
+claim5 = "[Table VII] In-the-wild evaluation on 200 real ClawHub skills (100 clean + 100 suspicious): 92.0% clean accuracy, 82.5% aggregate accuracy at 8.0% FPR (Finding 7)."
+script5 = "https://github.com/climbkim/SkillMutator-Artifact/blob/main/claims/claim05_wild_clawhub/run.sh"
+expected5 = "PASS: 92.0% clean, 82.5% aggregate, 8.0% FPR."
+claim6 = "[Table VIII] The local 7B scanner attains the lowest cost per scan and per detection among the evaluated scanners (Finding 8)."
+script6 = "https://github.com/climbkim/SkillMutator-Artifact/blob/main/claims/claim06_cost_envelope/run.sh"
+expected6 = "PASS: 7B lowest cost/detection ($0.0047 vs GPT-5.4 $0.0317)."
+claim7 = "[Table X] On the 17 unmodified Anthropic skills, all LLM scanners report findings on 17/17 skills, motivating the injected-content TP criterion."
+script7 = "https://github.com/climbkim/SkillMutator-Artifact/blob/main/claims/claim07_unmodified_baseline/run.sh"
+expected7 = "PASS: LLM scanners flag 17/17 unmodified skills."
+claim8 = "[Table XI, Appendix B] Per-category confusion matrix over 76 mutated and 221 unmodified (skill, category) pairs: recall 88.2%, precision 60.9%."
+script8 = "https://github.com/climbkim/SkillMutator-Artifact/blob/main/claims/claim08_per_category_matrix/run.sh"
+expected8 = "PASS: recall 88.2%, precision 60.9%."
+claim9 = "[Figure 4] Iterative evasion refinement lowers LLM-scanner detection after the first refinement step for all three GPT oracles (drop from iter_0 to iter_1; every post-iter_1 iteration stays below iter_1). The trend is NOT strictly monotonic (later iterations may partially recover/plateau)."
+script9 = "https://github.com/climbkim/SkillMutator-Artifact/blob/main/claims/claim09_ier_dynamics/run.sh"
+expected9 = "PASS: detection drops iter_0->iter_1 for all 3 oracles."
+claim10 = "[Figure 5] Phase-4 prefilling is model-dependent: it raises detection for the code-specialized Qwen (+9.2pp) but reduces Llama/Mistral/Gemma; both the GPT-5.4 and Claude-Opus-4.7 judges show the same pattern (Finding 5). Prefill is a model-specific decoding aid, not universally beneficial."
+script10 = "https://github.com/climbkim/SkillMutator-Artifact/blob/main/claims/claim10_prefill_delta/run.sh"
+expected10 = "PASS: Qwen +9.2pp; Llama/Mistral/Gemma negative."
+claim11 = "[Figure 5] Reasoning-trajectory distillation improves detection across four base model families, with Qwen2.5-Coder-7B strongest (Finding 5)."
+script11 = "https://github.com/climbkim/SkillMutator-Artifact/blob/main/claims/claim11_finetune_base_models/run.sh"
+expected11 = "PASS: 4 base families improve; Qwen strongest (88.2%)."
+claim12 = "[Figure 6] The fine-tuned 7B scanner reaches 88.2% detection on n=76, matching or exceeding frontier proprietary scanners (Finding 4)."
+script12 = "https://github.com/climbkim/SkillMutator-Artifact/blob/main/claims/claim12_rq3_comparison/run.sh"
+expected12 = "PASS: Qwen-7B (ours) 88.2% on n=76, matches/exceeds frontier."
+
+# The end-to-end functional demos (mutate->scan, and the distillation data
+# format) are not paper claims and are run directly from the code:
+# artifact/code/skillmutator/run.sh and artifact/code/finetuning-framework/run.sh
+# (or via ./run.sh --tier 2). See README "SkillMutator Pipeline" / "Fine-tuning
+# Data Pipeline".
+hw = """
+MAXIMUM (full end-to-end reproduction): one NVIDIA A100 80 GB.
+  - LoRA fine-tuning of the four base families from scratch (Figure 5) and vLLM batch
+    inference run on the A100; a single 7-9B scanner needs >=24 GB VRAM.
+  - Network + disk: base weights are re-downloaded from the Hugging Face Hub at run time
+    (Qwen2.5-Coder-7B / Llama-3.1-8B / Mistral-7B / Gemma-2-9B, ~14-18 GB each, ~63 GB
+    for all four) plus the four LoRA adapters (~2.5 GB). ~1.5 days wall-clock (README Tier 4).
+MINIMUM (proposed claim-verification subset): any CPU, 1 core, ~2 GB RAM, ~10 GB disk,
+no GPU or network - regenerates every table/figure from the bundled scanner-verdict CSVs."""
+sw = """
+OS: Linux (macOS / Windows via WSL or Git Bash also work); tested on Python 3.12 (Ubuntu 22.04). Python >=3.10.
+MAXIMUM (full reproduction): the ML stack torch / transformers / peft / vllm (GPU training + local inference) plus openai + langchain / langgraph (mutation generation and oracle/judge scans).
+MINIMUM (proposed claim-verification subset): pandas, numpy, pyyaml, openpyxl only (installed by install.sh); no GPU or API libraries needed."""
+api = "Full reproduction REQUIRES an OpenAI API key (paid) for mutation generation and oracle/judge scans. The table/figure claim subset can be verified without a key (bundled verdicts). Keys are read from a local .env and are never bundled."
+gui = "n"
+provenance = "https://github.com/climbkim/SkillMutator-Artifact/blob/main/README.md"
+ethics = "https://github.com/climbkim/SkillMutator-Artifact/blob/main/ETHICS.md"
+readme = "https://github.com/climbkim/SkillMutator-Artifact/blob/main/README.md"

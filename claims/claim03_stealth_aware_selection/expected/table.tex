@@ -1,0 +1,24 @@
+% Table V — select vs no-select Mode Comparison (paper L807-828, verified)
+% Source: derived/tab_select_vs_noselect.csv (built by scripts/build_table5.py)
+
+\begin{table}[t]
+\centering
+\caption{Detection rate (\%) for the \texttt{select} and \texttt{no-select} modes on the GPT-5.4 oracle dataset, adjudicated by GPT-5.4 judge. SkillScan was added later on its own scenario set ($n{=}76/221$); all other scanners share $n{=}76/215$.}
+\label{tab:select_vs_noselect}
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lccc}
+\toprule
+\textbf{Scanner} & \textbf{\texttt{select}} & \textbf{\texttt{no-select}} & \textbf{$\Delta$} \
+\midrule
+\texttt{skill-security-scan}        &  7.89\% & 12.09\% & $+4.20\text{\,pp}$ \
+Snyk Agent Scan                     &  9.21\% & 16.74\% & $+7.53\text{\,pp}$ \
+SkillScan API                       &  1.32\% &  5.43\% & $+4.11\text{\,pp}$ \
+GPT-4o-mini  (LLM)                  & 23.68\% & 36.74\% & $+13.06\text{\,pp}$ \
+GPT-5.4-mini (LLM)                  & 78.95\% & 87.91\% & $+8.96\text{\,pp}$ \
+GPT-5.4      (LLM)                  & \textbf{86.84\%} & \textbf{91.63\%} & $+4.79\text{\,pp}$ \
+\midrule
+\textbf{Average (6 scanners)}       & \textbf{34.65\%} & \textbf{41.76\%} & $\mathbf{+7.10}\textbf{\,pp}$ \
+\bottomrule
+\end{tabular}
+}
+\end{table}

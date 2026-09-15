@@ -1,0 +1,12 @@
+Paper element: Table IV
+Source bundle: table3_cross_scanner_matrix
+
+Claim
+-----
+Across the three GPT adversarial-oracle datasets (n=48/63/76), rule-based and commercial scanners detect only 0-17% of SkillMutator mutations (Finding 1: skill-security-scan 2.1-7.9%, Snyk 9.2-16.7%, SkillScan 0-1.3%); published prompt-injection detectors remain low at 0-40% (Finding 2: LLM-Guard/PIGuard/DataSentinel, with PIGuard peaking at 39.6% on GPT-4o-mini).
+
+How this claim is checked
+-------------------------
+Run ./run.sh. It regenerates the aggregate from the raw data in
+data/ and compares the result against the values cited in the
+paper (expected/PAPER_CITED_VALUES.md).

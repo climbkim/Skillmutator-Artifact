@@ -1,0 +1,12 @@
+Paper element: Table XI (Appendix B)
+Source bundle: appendix_b_per_category_matrix
+
+Claim
+-----
+Per-category confusion matrix over 76 mutated and 221 unmodified (skill, category) pairs: recall 88.2%, precision 60.9%.
+
+How this claim is checked
+-------------------------
+Run ./run.sh. It verifies the bundled aggregate against the paper-cited
+values in expected/PAPER_CITED_VALUES.md (within tolerance) and prints the
+match result.

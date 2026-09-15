@@ -1,0 +1,6 @@
+scanner,scanner_key,gpt-4o-mini_n,gpt-4o-mini_det,gpt-4o-mini_rate,gpt-5.4-mini_n,gpt-5.4-mini_det,gpt-5.4-mini_rate,gpt-5.4_n,gpt-5.4_det,gpt-5.4_rate
+\texttt{skill-security-scan},ss,51,1,1.96,63,4,6.35,76,6,7.89
+Snyk Agent Scan,snyk,51,8,15.69,63,6,9.52,76,7,9.21
+GPT-4o-mini,gpt-4o-mini,51,17,33.33,63,6,9.52,76,18,23.68
+GPT-5.4-mini,gpt-5.4-mini,51,38,74.51,63,45,71.43,76,60,78.95
+GPT-5.4,gpt-5.4,51,43,84.31,63,56,88.89,76,66,86.84

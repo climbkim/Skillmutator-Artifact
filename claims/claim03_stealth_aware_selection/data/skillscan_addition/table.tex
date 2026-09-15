@@ -1,0 +1,29 @@
+% Table V — select vs no-select, 6 scanners including SkillScan (Option A: OLD baselines)
+% Source: derived/select_perscenario.csv (paper canonical 1.32%) +
+%         derived/no_select_perscenario.csv paired-delta (5.43%)
+%
+% Replaces existing 5-scanner Table V in paper.tex (around L668).
+% Average row updated: select 41.31 -> 34.65, no-select 49.02 -> 41.76,
+% average drop 7.71pp -> 7.10pp.
+
+\begin{table}[t]
+\centering
+\caption{Detection rate (\%) for the \texttt{select} and \texttt{no-select} modes on the GPT-5.4 oracle dataset.}
+\label{tab:select_vs_noselect}
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lcc}
+\toprule
+\textbf{Scanner} & \textbf{\texttt{select} ($n{=}76$)} & \textbf{\texttt{no-select} ($n{=}215$)} \\
+\midrule
+skill-security-scan~\cite{huifer_skill_security_scan}   &  7.89\% & 12.09\% \\
+Snyk Agent Scan~\cite{snykagent2026}                    &  9.21\% & 16.74\% \\
+SkillScan~\cite{clawhub_skillscan2026}                  &  1.32\% &  5.43\% \\
+GPT-4o-mini~\cite{openai2024gpt4omini}                  & 23.68\% & 36.74\% \\
+GPT-5.4-mini~\cite{openai2026gpt54mini}                 & 78.95\% & 87.91\% \\
+GPT-5.4~\cite{openai2026gpt54}                          & \textbf{86.84\%} & \textbf{91.63\%} \\
+\midrule
+\textbf{Average (6 scanners)} & \textbf{34.65\%} & \textbf{41.76\%} \\
+\bottomrule
+\end{tabular}
+}
+\end{table}

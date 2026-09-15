@@ -1,0 +1,18 @@
+Paper element: Table VII
+Source bundle: table11_wild_eval
+
+Claim
+-----
+In-the-wild evaluation on 200 real ClawHub skills (100 clean + 100 suspicious,
+balanced 25 each across LOW/MED/HIGH/CRIT): the fine-tuned local scanner reaches
+92.0% accuracy on clean skills (8 unsupported false alarms / 100) and higher
+accuracy on more severe suspicious tiers (LOW 60% / MED 68% / HIGH 84% / CRIT
+80%), for an aggregate accuracy of 82.5% at an 8.0% false-positive rate
+(Finding 7 / Table VII). The scanner transfers beyond the synthetic SkillMutator
+distribution while preserving a low false-positive rate.
+
+How this claim is checked
+-------------------------
+Run ./run.sh. It verifies the bundled aggregate against the paper-cited
+values in expected/PAPER_CITED_VALUES.md (within tolerance) and prints the
+match result.

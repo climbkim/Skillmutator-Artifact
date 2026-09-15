@@ -1,0 +1,39 @@
+{
+  "paper_element": "Table X (tab:baseline_aggregate) — per-scanner finding counts on the 17 unmodified Anthropic skills. Each scanner contributes 4 checked cells: skills_with (# of 17 skills with >=1 finding), mean, max, total. Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
+  "source": "Skillmutator.tex \\label{tab:baseline_aggregate}",
+  "metrics": {
+    "skill-security-scan/skills_with": 9,
+    "skill-security-scan/mean": 18.18,
+    "skill-security-scan/max": 190,
+    "skill-security-scan/total": 309,
+    "Snyk Agent Scan/skills_with": 4,
+    "Snyk Agent Scan/mean": 0.35,
+    "Snyk Agent Scan/max": 2,
+    "Snyk Agent Scan/total": 6,
+    "GPT-4o-mini/skills_with": 17,
+    "GPT-4o-mini/mean": 7.12,
+    "GPT-4o-mini/max": 9,
+    "GPT-4o-mini/total": 121,
+    "GPT-5.4-mini/skills_with": 17,
+    "GPT-5.4-mini/mean": 6.41,
+    "GPT-5.4-mini/max": 10,
+    "GPT-5.4-mini/total": 109,
+    "GPT-5.4/skills_with": 17,
+    "GPT-5.4/mean": 9.59,
+    "GPT-5.4/max": 14,
+    "GPT-5.4/total": 163,
+    "SkillScan (upload API)/skills_with": 5,
+    "SkillScan (upload API)/mean": 0.35,
+    "SkillScan (upload API)/max": 2,
+    "SkillScan (upload API)/total": 6
+  },
+  "tolerance_pp": {
+    "_default": 0,
+    "skill-security-scan/mean": 0.02,
+    "Snyk Agent Scan/mean": 0.02,
+    "GPT-4o-mini/mean": 0.02,
+    "GPT-5.4-mini/mean": 0.02,
+    "GPT-5.4/mean": 0.02,
+    "SkillScan (upload API)/mean": 0.05
+  }
+}

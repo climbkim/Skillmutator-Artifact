@@ -1,0 +1,20 @@
+% Figure 5 — Fine-tuning Detection Across Base Models (post-U4 patch)
+% Source: judge/{qwen,llama,mistral,gemma}-{base,d3_noprefill,d3_prefill}.csv
+% Aggregator: scripts/build_table6.py → derived/table6_aggregate.csv
+
+\begin{table}[t]
+\centering
+\caption{Detection rate (\%) of base open-source models and their fine-tuned variants on the 76-case SkillMutator benchmark. The prefill column forces ``\texttt{\# Phase 4: Category Mapping}'' as the assistant-turn prefix. Bold marks the better of \{noprefill, prefill\} per row. Forcing the Phase 4 header via prefill benefits Qwen but is counterproductive on Llama and Mistral, indicating an interaction with each model family's chat template that warrants further study. The Gemma row retains the RQ1 3-section evaluation; others use the CrossOracle 4-section evaluation.}
+\label{tab:finetune_rq1}
+\footnotesize
+\begin{tabular}{lrrr}
+\toprule
+Base model & un-FT & D3 noprefill & D3 prefill \\
+\midrule
+Qwen2.5-Coder-7B-Instruct & 17.1\% & 79.0\% & \textbf{88.2\%} \\
+Llama-3.1-8B-Instruct     &  7.9\% & \textbf{82.9\%} & 75.0\% \\
+Mistral-7B-Instruct-v0.3  &  5.3\% & \textbf{72.4\%} & 55.3\% \\
+Gemma-2-9b-it             & 10.5\% & \textbf{59.2\%} & 56.6\% \\
+\bottomrule
+\end{tabular}
+\end{table}

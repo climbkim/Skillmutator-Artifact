@@ -1,0 +1,28 @@
+{
+  "paper_element": "Table V (tab:select_vs_noselect) — stealth-aware selection vs no-select detection rates, 6 scanners x (select%, no-select%, delta pp) plus the 6-scanner average. Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
+  "source": "Skillmutator.tex \\label{tab:select_vs_noselect} (paper L807-828)",
+  "metrics": {
+    "skill-security-scan/select": 7.89,
+    "skill-security-scan/noselect": 12.09,
+    "skill-security-scan/delta": 4.20,
+    "Snyk Agent Scan/select": 9.21,
+    "Snyk Agent Scan/noselect": 16.74,
+    "Snyk Agent Scan/delta": 7.53,
+    "SkillScan API/select": 1.32,
+    "SkillScan API/noselect": 5.43,
+    "SkillScan API/delta": 4.11,
+    "GPT-4o-mini scanner/select": 23.68,
+    "GPT-4o-mini scanner/noselect": 36.74,
+    "GPT-4o-mini scanner/delta": 13.06,
+    "GPT-5.4-mini scanner/select": 78.95,
+    "GPT-5.4-mini scanner/noselect": 87.91,
+    "GPT-5.4-mini scanner/delta": 8.96,
+    "GPT-5.4 scanner/select": 86.84,
+    "GPT-5.4 scanner/noselect": 91.63,
+    "GPT-5.4 scanner/delta": 4.79,
+    "Average (6 scanners)/select": 34.65,
+    "Average (6 scanners)/noselect": 41.76,
+    "Average (6 scanners)/delta": 7.10
+  },
+  "tolerance_pp": 0.06
+}

@@ -1,0 +1,12 @@
+Paper element: Table III
+Source bundle: table4_refusal_behavior
+
+Claim
+-----
+Safety-refusal rates during mutation generation differ across oracles; GPT-5.4-mini refuses most often.
+
+How this claim is checked
+-------------------------
+Run ./run.sh. It regenerates the aggregate from the raw data in
+data/ and compares the result against the values cited in the
+paper (expected/PAPER_CITED_VALUES.md).

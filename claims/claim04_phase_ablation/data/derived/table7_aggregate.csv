@@ -1,0 +1,7 @@
+row,detected,total,rate_pct,delta_pp
+Phase 1 (Purpose Grounding),1,76,1.32,
++ Phase 2 (Out-of-Scope Detection),19,76,25.00,+23.7pp
++ Phase 3 (Principle Reasoning),44,76,57.89,+32.9pp
++ Phase 4 (Category Labeling),51,76,67.11,+9.2pp
++ deterministic refinement,60,76,78.95,+11.8pp
++ prefill (Phase 4 header forced),67,76,88.16,+9.2pp

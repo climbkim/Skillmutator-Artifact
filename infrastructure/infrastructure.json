@@ -1,0 +1,68 @@
+{
+  "public_infrastructure": {
+    "recommended": "Google Colab (free CPU runtime)",
+    "url": "https://colab.research.google.com/",
+    "also_supported": ["CloudLab", "Chameleon", "FABRIC", "SPHERE", "any 1-CPU / 2-GB / 10-GB Linux VM"],
+    "note": "The proposed evaluation (Tier 1 claim verification) runs here with no GPU, API key, or network."
+  },
+  "source_urls": {
+    "artifact_bundle": "https://github.com/climbkim/SkillMutator-Artifact",
+    "source_code": "https://github.com/climbkim/SkillMutator",
+    "lora_adapters": "https://huggingface.co/climbkim/skillmutator-scanner-adapters",
+    "base_models": {
+      "Qwen/Qwen2.5-Coder-7B-Instruct": "https://huggingface.co/Qwen/Qwen2.5-Coder-7B-Instruct",
+      "meta-llama/Llama-3.1-8B-Instruct": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
+      "mistralai/Mistral-7B-Instruct-v0.3": "https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.3",
+      "google/gemma-2-9b-it": "https://huggingface.co/google/gemma-2-9b-it"
+    },
+    "external_scanners": {
+      "skill-security-scan (MIT)": "https://github.com/huifer/skill-security-scan",
+      "Snyk Agent Scan (Apache-2.0)": "https://github.com/snyk/agent-scan",
+      "Sentry Skill Scanner (Apache-2.0)": "https://github.com/getsentry/skills",
+      "Cisco AI Defense Skill Scanner (Apache-2.0)": "https://github.com/cisco-ai-defense/skill-scanner",
+      "SkillScan (MIT)": "https://github.com/NMitchem/SkillScan",
+      "Under the Hood (no license)": "https://github.com/ShoumikSaha/agent-skill-security"
+    },
+    "note": "External scanners and base models are NOT redistributed; they are fetched from these URLs at run time."
+  },
+  "resources": {
+    "proposed_evaluation_tier1_cpu": {
+      "cpu": "1 core (any modern CPU)",
+      "memory": "~2 GB",
+      "disk": "~10 GB (artifact + virtualenv)",
+      "gpu": "none",
+      "network": "none (all inputs bundled)",
+      "api_key": "none",
+      "software": ["pandas", "numpy", "pyyaml", "openpyxl"],
+      "runtime": "~minutes",
+      "description": "Regenerates every paper table and figure from the bundled scanner-verdict CSVs and prints PASS/FAIL."
+    },
+    "full_reproduction_optional_gpu": {
+      "cpu": "modern multi-core",
+      "memory": ">= 32 GB",
+      "disk": "~10 GB artifact + ~2.5 GB LoRA adapters + ~63 GB base models (four families)",
+      "gpu": "1x NVIDIA A100 80 GB (>= 24 GB VRAM for a single 7-9B scanner)",
+      "network": "required (OpenAI API + Hugging Face downloads)",
+      "api_key": "OpenAI (paid); read from a local .env, never bundled",
+      "software": ["torch", "transformers", "peft", "trl", "datasets", "accelerate", "vllm", "huggingface_hub", "openai", "langchain-core", "langchain-openai", "langgraph", "tiktoken"],
+      "runtime": "~1.5 days",
+      "cost": "~28 A100-hours (~$31 at $1.10/h) + ~$40-90 API (teacher-dependent)",
+      "description": "Live mutation/scan pipeline + LoRA training of the four base families from scratch + inference. See README 'Tier 4 stage breakdown'."
+    }
+  },
+  "allocation": {
+    "proposed_evaluation": "No allocation required; runs on free public infrastructure.",
+    "full_reproduction": "Optional, justified constraint (security-sensitive generation + GPU training). Needs a reviewer-provided NVIDIA A100 80 GB: a rented cloud A100 (RunPod / Lambda / vast.ai, ~$1.10-1.79/h) or an institutional GPU server. This is NOT the proposed evaluation task and exceeds a one-day review budget.",
+    "reviewer_access": "On request the authors provide anonymous SSH access to a preconfigured A100 80 GB box (climbkim@kaist.ac.kr), satisfying the AE requirement that required private infrastructure be made available to reviewers."
+  },
+  "software_setup": {
+    "os": "Linux (macOS / Windows via WSL or Git Bash also work); container-tested on python:3.12-slim.",
+    "python": ">= 3.10 (tested 3.12; Google Colab compatible)",
+    "install": {
+      "./install.sh": "core (pandas, numpy, pyyaml, openpyxl) -> Tier 1 CPU verification (public infrastructure)",
+      "./install.sh --generate": "+ openai, langchain-core/-openai, langgraph, tiktoken, python-dotenv -> live mutation/scan (REQUIRES OpenAI key)",
+      "./install.sh --finetune": "+ torch, transformers, peft, trl, datasets, accelerate, vllm, huggingface_hub -> training / local scanner (REQUIRES GPU)",
+      "./install.sh --all": "core + generate + finetune"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+% Table III — Safety-Refusal Counts (paper L753-775, verified)
+% Source: derived/table4_aggregate.csv (built by scripts/build_table4.py)
+
+\begin{table}[t]
+\centering
+\caption{Safety-refusal counts per adversarial oracle. Final-iter refusals re-pin to the last normal iteration.}
+\label{tab:refusal_i4_summary}
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Metric} & \textbf{GPT-4o-mini} & \textbf{GPT-5.4-mini} & \textbf{GPT-5.4} \
+\midrule
+Attempted scenarios ($n$)         & 51 & 63 & 76 \
+Refusal rate at final iteration   & 23.53\% & 42.86\% & 9.21\% \
+Refusals per iter ($n$)           & 4/12/14/11/\textbf{12} & 0/15/22/22/\textbf{27} & 0/4/4/8/\textbf{7} \
+\midrule
+\multicolumn{4}{l}{\textit{Refusal mechanism ($n$)}} \
+\;\;Silent failure                 &  2 & 23 & 0 \
+\;\;Explicit text refusal          &  0 &  4 & 0 \
+\;\;Partial refusal                & 10 &  0 & 7 \
+\bottomrule
+\end{tabular}
+}
+\end{table}

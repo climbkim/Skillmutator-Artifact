@@ -1,0 +1,22 @@
+% Paper canonical snippet — copy of paper.tex L809-829
+\begin{table}[t]
+\centering
+\caption{Per-scan operating cost on the GPT-5.4 oracle benchmark ($n{=}76$).
+Multipliers in parentheses are relative to our fine-tuned scanner.
+\$/detected~$=\$$/skill~$\div$~(recall/100).}
+\label{tab:cost_envelope}
+\setlength{\tabcolsep}{5pt}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{} l r c r @{}}
+\toprule
+\textbf{Scanner} & \textbf{\$/skill} & \textbf{Recall} & \textbf{\$/det.} \\
+\midrule
+\textbf{Qwen-7B + ours}\,(local) & \textbf{\$0.00414} ($1.00\times$) & \textbf{88.16\%} & \textbf{\$0.00469} ($1.00\times$) \\
+\midrule
+GPT-4o-mini           & \$0.00178 ($0.43\times$) & 23.68\% & \$0.00753 ($1.60\times$) \\
+GPT-5.4-mini          & \$0.00664 ($1.60\times$) & 78.95\% & \$0.00841 ($1.79\times$) \\
+GPT-5.4               & \$0.02754 ($6.65\times$) & 86.84\% & \$0.03171 ($6.76\times$) \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}

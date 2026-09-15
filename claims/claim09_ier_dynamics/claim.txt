@@ -1,0 +1,12 @@
+Paper element: Figure 4
+Source bundle: figure4_ier_dynamics
+
+Claim
+-----
+Iterative evasion refinement lowers LLM-scanner detection after the first refinement step for all three GPT oracles: detection drops from iter_0 to iter_1, and every post-iter_1 iteration stays below the iter_1 level. The trend is NOT strictly monotonic (some later iterations partially recover/plateau) (Figure 4 / paper text).
+
+How this claim is checked
+-------------------------
+Run ./run.sh. It verifies the bundled aggregate against the paper-cited
+values in expected/PAPER_CITED_VALUES.md (within tolerance) and prints the
+match result.
