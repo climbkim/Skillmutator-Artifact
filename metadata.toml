@@ -2,7 +2,7 @@
 # Regenerate/verify with: python artmeta.py  (it reads this file back and lets you edit answers).
 
 badge = "r"
-artifact_url = "https://github.com/climbkim/SkillMutator-Artifact"
+artifact_url = "https://doi.org/10.5281/zenodo.22768211"
 cd = "c"
 citation = """
 @inproceedings{kim2026skillmutator,

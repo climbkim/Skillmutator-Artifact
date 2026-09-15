@@ -15,7 +15,8 @@ reproduces WHAT; see use.txt for the exact commands and options.
 Availability
 ------------
   Component                                  Location (URL)
-  Artifact bundle (this repo; Zenodo DOI at camera-ready)  https://github.com/climbkim/SkillMutator-Artifact
+  Artifact bundle -- permanent archive (Zenodo DOI)  https://doi.org/10.5281/zenodo.22768211
+  Artifact bundle -- development repository  https://github.com/climbkim/SkillMutator-Artifact
   Source code (mutation pipeline + fine-tuning framework)  https://github.com/climbkim/SkillMutator
   Fine-tuned LoRA adapters (4 models, ~2.5GB) https://huggingface.co/climbkim/skillmutator-scanner-adapters
   External scanner: skill-security-scan (MIT)          https://github.com/huifer/skill-security-scan
@@ -33,7 +34,7 @@ claim-verification path below is self-contained and needs none of these assets.
 
 Public release: this artifact is released publicly under the MIT license
 (license.txt). The code repositories above and the permanently archived bundle
-(Zenodo DOI, added by the camera-ready deadline) are its public record.
+(Zenodo DOI 10.5281/zenodo.22768211) are its public record.
 
 Requirements
 ------------
