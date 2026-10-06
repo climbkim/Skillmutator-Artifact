@@ -277,9 +277,11 @@ Directory layout
 
 Safety / ethics
 ---------------
-The benchmark contains adversarial (mutated) Agent Skills with injected
-malicious instructions, shipped ONLY as scanner inputs for an isolated
-environment -- do not install or execute them against a live agent. Payloads are
+The benchmark consists of adversarial (mutated) Agent Skills with injected
+malicious instructions, to be used ONLY as scanner inputs in an isolated
+environment -- do not install or execute them against a live agent. These mutated
+skills are NOT bundled (to prevent misuse); they are generated on disk only when
+the live pipeline (Tier 2-4) is run. Payloads are
 inert templates (no real credentials/secrets/live endpoints); raw scanner text
 and full mutations are withheld (verdicts/aggregates only). See ETHICS.md
 and use.txt. No personal data is included.
