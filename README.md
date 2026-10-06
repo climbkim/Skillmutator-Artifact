@@ -147,6 +147,15 @@ repeated runs, and pin model snapshots + seeds where supported.
 ./install.sh --all && ./run.sh --tier 4 --env-file .env
 ```
 
+**Before you start (two fresh-clone notes):**
+- *Permissions.* The scripts are committed executable, but if your clone drops the
+  bit (`permission denied`), just prefix `bash`: `bash install.sh && bash run.sh --tier 1`
+  (and `bash claims/claimNN/run.sh` for a single claim).
+- *venv on Debian / Ubuntu / Google Colab.* If `install.sh` stops at `python3 -m venv`
+  with `No module named ensurepip`, install the separate venv package once and re-run:
+  `sudo apt-get update && sudo apt-get install -y python3-venv` (or the version-specific
+  package named in the error, e.g. `python3.13-venv`).
+
 Options (add to any tier):
 - `--no-gpu` — skip the GPU finetune step (the skillmutator side never needs a GPU)
 - `--env-file PATH` — load `OPENAI_API_KEY`

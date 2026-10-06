@@ -30,7 +30,17 @@ done
 
 PY="${PYTHON:-python3}"
 echo "== creating virtual environment (.venv) =="
-"$PY" -m venv .venv
+# On Debian / Ubuntu / Google Colab the stdlib `venv` ships as a separate package,
+# so `python3 -m venv` can fail with "No module named ensurepip". Catch that and
+# print the one-line fix instead of aborting with an opaque traceback.
+if ! "$PY" -m venv .venv; then
+  echo "" >&2
+  echo "ERROR: '$PY -m venv .venv' failed (often: 'No module named ensurepip')." >&2
+  echo "On Debian / Ubuntu / Google Colab, install the venv package and re-run:" >&2
+  echo "    sudo apt-get update && sudo apt-get install -y python3-venv" >&2
+  echo "    # or the version-specific package named in the error, e.g. python3.13-venv" >&2
+  exit 1
+fi
 # shellcheck disable=SC1091
 source .venv/bin/activate 2>/dev/null || source .venv/Scripts/activate
 
