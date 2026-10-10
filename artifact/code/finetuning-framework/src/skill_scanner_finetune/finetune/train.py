@@ -1,5 +1,5 @@
-"""D1 train.py — same recipe as C20 (all-token loss), bypasses SFTTrainer
-version churn by using plain Trainer with explicit pre-tokenization."""
+"""LoRA fine-tuning entry point — all-token loss via a plain Trainer with
+explicit pre-tokenization (avoids SFTTrainer version churn)."""
 
 from __future__ import annotations
 

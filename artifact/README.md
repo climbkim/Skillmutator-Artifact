@@ -48,8 +48,17 @@ export OPENAI_API_KEY=...               # or put it in a local .env
 cd skillmutator && ./run.sh             # mutate a sample skill -> scan -> build tables
 ```
 
-The fine-tuned LoRA adapters (four base families) are on Hugging Face:
-<https://huggingface.co/climbkim/skillmutator-scanner-adapters>
+The fine-tuned LoRA adapters (four base families) are on Hugging Face, pinned to
+the revision evaluated in the paper (`a44e1da61a0b8d7d799a71221a20a10a0f3174a9`):
+<https://huggingface.co/climbkim/skillmutator-scanner-adapters/tree/a44e1da61a0b8d7d799a71221a20a10a0f3174a9>
+
+```bash
+hf download climbkim/skillmutator-scanner-adapters --revision a44e1da61a0b8d7d799a71221a20a10a0f3174a9 --local-dir adapters
+```
+
+The archive checksums are in `MANIFEST.sha256` at that revision.
+`scripts/fetch_adapter.py` (finetuning-framework `run.sh` stage [C]) downloads
+this revision by default.
 
 ## Responsible use
 

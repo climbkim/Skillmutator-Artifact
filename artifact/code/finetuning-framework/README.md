@@ -124,8 +124,9 @@ skill-scanner-finetune/
 ## LoRA adapter availability
 
 The pre-trained LoRA adapter is **released** on the Hugging Face Hub
-(`ADAPTER_REPO = climbkim/skillmutator-scanner-adapters`). `run.sh` stage
-[C] downloads it with `scripts/fetch_adapter.py`; you can also re-create it from
+(`ADAPTER_REPO = climbkim/skillmutator-scanner-adapters`, pinned to revision
+`a44e1da`). `run.sh` stage [C] downloads that revision with
+`scripts/fetch_adapter.py`; you can also re-create it from
 scratch via the full pipeline. See [`docs/ADAPTER_POLICY.md`](docs/ADAPTER_POLICY.md)
 for provenance, licensing, and attribution.
 

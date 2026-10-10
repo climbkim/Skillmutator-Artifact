@@ -18,7 +18,8 @@ Usage:
         --model Qwen2.5-Coder-7B-Instruct \\
         --out   ${OUTPUT_DIR}/adapter
 
-`--repo` also comes from ADAPTER_REPO; `--model` from ADAPTER_MODEL.
+`--repo` also comes from ADAPTER_REPO; `--model` from ADAPTER_MODEL; `--revision`
+from ADAPTER_REVISION (default: the pinned commit evaluated in the paper).
 """
 from __future__ import annotations
 
@@ -29,6 +30,9 @@ import tarfile
 from pathlib import Path
 
 DEFAULT_REPO = "climbkim/skillmutator-scanner-adapters"
+# Hub commit holding the adapters evaluated in the paper (pinned so a later
+# push to the repo cannot change what this script downloads).
+DEFAULT_REVISION = "a44e1da61a0b8d7d799a71221a20a10a0f3174a9"
 
 
 def _log(msg: str) -> None:
@@ -50,8 +54,9 @@ def main() -> int:
                          "(default: Qwen2.5-Coder-7B-Instruct).")
     ap.add_argument("--filename", default=None,
                     help="Explicit archive filename (overrides --model).")
-    ap.add_argument("--revision", default=os.getenv("ADAPTER_REVISION", None),
-                    help="Optional git revision / tag / commit to pin.")
+    ap.add_argument("--revision", default=os.getenv("ADAPTER_REVISION", DEFAULT_REVISION),
+                    help=f"Hub revision / tag / commit to download (default: {DEFAULT_REVISION}, "
+                         "the release evaluated in the paper).")
     ap.add_argument("--out", required=True, help="Local directory to download + extract into.")
     args = ap.parse_args()
 

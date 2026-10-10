@@ -51,7 +51,7 @@ CPU only; no API key or GPU needed for verification.
 ## (5) Fine-tuned adapters (for full re-inference only)
 
 The Qwen2.5-Coder-7B LoRA adapter is hosted on Hugging Face, not bundled. See
-the Hugging Face adapter repo (huggingface.co/climbkim/skillmutator-scanner-adapters) for the exact asset name. The no-refinement ablation adapter is
+the Hugging Face adapter repo (huggingface.co/climbkim/skillmutator-scanner-adapters, revision `a44e1da`) for the exact asset name. The no-refinement ablation adapter is
 not published (available on request; see `ETHICS.md`). Re-inference needs a single >= 24 GB GPU.
 
 ## (6) Evaluation note — four-section consistent chain

@@ -2,7 +2,7 @@
 
 Base model weights (each ~14-15 GB) are **NOT copied** to keep bundle size manageable.
 Re-download from Hugging Face Hub at reproduction time. Each model is paired with a
-LoRA adapter on Hugging Face (huggingface.co/climbkim/skillmutator-scanner-adapters), same base name.
+LoRA adapter on Hugging Face (huggingface.co/climbkim/skillmutator-scanner-adapters, revision `a44e1da`), same base name.
 
 ## Models used in paper
 

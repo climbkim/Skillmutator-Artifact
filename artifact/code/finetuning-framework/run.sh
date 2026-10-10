@@ -27,6 +27,7 @@
 #   SCAN_CATEGORY="Data Exfiltration"    injected category of SCAN_TARGET (demo)
 #   TEACHER=gpt-4o-mini       teacher model for [A] (cost-friendly default)
 #   ADAPTER_REPO=<hf repo id> released adapter to download in [C] (REQUIRED for D-F)
+#   ADAPTER_REVISION=<commit> Hub revision of the adapter (default: pinned paper release)
 #   BASE_MODEL=Qwen/Qwen2.5-Coder-7B-Instruct
 #   OUTPUT_DIR=./output_demo
 #   MAX_STEPS=5               demo training steps for [B]

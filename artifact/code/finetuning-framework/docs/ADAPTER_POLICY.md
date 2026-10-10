@@ -7,13 +7,15 @@ detection on the 76-case GPT-5.4 oracle benchmark) is **released** on the
 Hugging Face Hub:
 
     ADAPTER_REPO = climbkim/skillmutator-scanner-adapters
+    ADAPTER_REVISION = a44e1da61a0b8d7d799a71221a20a10a0f3174a9
 
 The repo holds one archive per base model
 (`Skillmutator_Scanner-<model>.tar.gz` for Qwen / Llama / Mistral / Gemma).
 `scripts/fetch_adapter.py` (driven by `run.sh` stage [C]) downloads the archive
 for the selected `ADAPTER_MODEL` (default Qwen2.5-Coder-7B-Instruct), extracts it,
-and resolves the PEFT adapter directory. Override with `ADAPTER_REPO` /
-`ADAPTER_MODEL`.
+and resolves the PEFT adapter directory. The download is pinned to
+`ADAPTER_REVISION`, the Hub commit evaluated in the paper. Override with
+`ADAPTER_REPO` / `ADAPTER_MODEL` / `ADAPTER_REVISION`.
 
 ## Provenance and licensing (please cite / attribute)
 

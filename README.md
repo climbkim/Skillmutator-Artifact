@@ -18,10 +18,10 @@ verdicts, and per-claim reproduction scripts.
 
 | Component | Location (URL) |
 |---|---|
-| Artifact bundle — permanent archive (Zenodo DOI) | https://doi.org/10.5281/zenodo.22768211 |
+| Artifact bundle — permanent archive (Zenodo concept DOI, resolves to the latest version) | https://doi.org/10.5281/zenodo.22768210 |
 | Artifact bundle — development repository | https://github.com/climbkim/SkillMutator-Artifact |
 | Source code — mutation pipeline + fine-tuning framework | https://github.com/climbkim/SkillMutator |
-| Fine-tuned LoRA adapters (4 base models, ~2.5 GB) | https://huggingface.co/climbkim/skillmutator-scanner-adapters |
+| Fine-tuned LoRA adapters (4 base models, ~2.5 GB), pinned to revision `a44e1da` | https://huggingface.co/climbkim/skillmutator-scanner-adapters/tree/a44e1da61a0b8d7d799a71221a20a10a0f3174a9 |
 | External scanner — skill-security-scan (MIT) | https://github.com/huifer/skill-security-scan |
 | External scanner — Snyk Agent Scan (Apache-2.0) | https://github.com/snyk/agent-scan |
 | External scanner — Sentry Skill Scanner (Apache-2.0) | https://github.com/getsentry/skills |
@@ -39,7 +39,7 @@ claim-verification path is fully self-contained and needs none of these assets.
 
 **Public release.** This artifact is released publicly under the MIT license
 (`license.txt`). The code repositories above and the permanently archived bundle
-(Zenodo DOI `10.5281/zenodo.22768211`) are its public record; the
+(Zenodo concept DOI `10.5281/zenodo.22768210`) are its public record; the
 mutation pipeline, fine-tuning framework, benchmark verdicts, and per-claim
 reproduction scripts are all part of the public release.
 

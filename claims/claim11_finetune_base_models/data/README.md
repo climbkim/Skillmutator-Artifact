@@ -42,7 +42,7 @@ CPU only; no API key or GPU needed for verification.
 
 ## (5) Fine-tuned adapters (for full re-inference only)
 
-The LoRA adapters are hosted on Hugging Face, not bundled. See the Hugging Face adapter repo (huggingface.co/climbkim/skillmutator-scanner-adapters)
+The LoRA adapters are hosted on Hugging Face, not bundled. See the Hugging Face adapter repo (huggingface.co/climbkim/skillmutator-scanner-adapters, revision `a44e1da`)
 for the exact asset names (`Skillmutator_Scanner-<Model>.tar.gz`) and the base
 models to load them onto. Re-inference needs a single >= 24 GB GPU.
 

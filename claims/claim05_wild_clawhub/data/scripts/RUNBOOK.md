@@ -5,7 +5,7 @@ adapter with vLLM and run it over skills, using the exact inference settings the
 paper used. It requires a single GPU with >= 24 GB VRAM.
 
 - **Adapter**: the fine-tuned Qwen2.5-Coder-7B LoRA adapter (hosted on Hugging
-  Face; see huggingface.co/climbkim/skillmutator-scanner-adapters for the asset name). Download and extract it to a
+  Face; see huggingface.co/climbkim/skillmutator-scanner-adapters (revision `a44e1da`) for the asset name). Download and extract it to a
   local directory, referred to below as `<ADAPTER_DIR>`.
 - **Base model**: `Qwen/Qwen2.5-Coder-7B-Instruct`.
 - **System prompt**: the released scanner's system prompt (quoted

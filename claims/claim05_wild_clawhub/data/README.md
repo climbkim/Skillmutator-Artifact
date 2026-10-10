@@ -64,7 +64,7 @@ fine-tuned adapter + GPU — see `scripts/RUNBOOK.md`).
 
 ## (5) Dependencies (_shared/)
 
-- Fine-tuned Qwen2.5-Coder-7B adapter — hosted on Hugging Face (huggingface.co/climbkim/skillmutator-scanner-adapters)
+- Fine-tuned Qwen2.5-Coder-7B adapter — hosted on Hugging Face (huggingface.co/climbkim/skillmutator-scanner-adapters, revision `a44e1da`)
 - `_shared/base_models/MANIFEST.md` — Qwen2.5-Coder-7B-Instruct HF link + vLLM setup
 
 ## (6) Caveats — important methodological detail
