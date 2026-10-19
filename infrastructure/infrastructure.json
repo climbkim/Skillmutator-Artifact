@@ -8,7 +8,7 @@
   "source_urls": {
     "artifact_bundle": "https://github.com/climbkim/SkillMutator-Artifact",
     "source_code": "https://github.com/climbkim/SkillMutator",
-    "lora_adapters": "https://huggingface.co/climbkim/skillmutator-scanner-adapters",
+    "lora_adapters": "https://huggingface.co/climbkim/skillmutator-scanner-adapters/tree/a44e1da61a0b8d7d799a71221a20a10a0f3174a9",
     "base_models": {
       "Qwen/Qwen2.5-Coder-7B-Instruct": "https://huggingface.co/Qwen/Qwen2.5-Coder-7B-Instruct",
       "meta-llama/Llama-3.1-8B-Instruct": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
@@ -35,19 +35,19 @@
       "api_key": "none",
       "software": ["pandas", "numpy", "pyyaml", "openpyxl"],
       "runtime": "~minutes",
-      "description": "Regenerates every paper table and figure from the bundled scanner-verdict CSVs and prints PASS/FAIL."
+      "description": "Regenerates the 12 claimed tables/figures (Tables 3-8, 10, 11, Figures 4-6) from the bundled scanner-verdict CSVs and prints PASS/FAIL."
     },
     "full_reproduction_optional_gpu": {
       "cpu": "modern multi-core",
       "memory": ">= 32 GB",
-      "disk": "~10 GB artifact + ~2.5 GB LoRA adapters + ~63 GB base models (four families)",
+      "disk": "~10 GB artifact + ~2.5 GB LoRA adapters + ~15 GB base model (Qwen2.5-Coder-7B)",
       "gpu": "1x NVIDIA A100 80 GB (>= 24 GB VRAM for a single 7-9B scanner)",
       "network": "required (OpenAI API + Hugging Face downloads)",
       "api_key": "OpenAI (paid); read from a local .env, never bundled",
       "software": ["torch", "transformers", "peft", "trl", "datasets", "accelerate", "vllm", "huggingface_hub", "openai", "langchain-core", "langchain-openai", "langgraph", "tiktoken"],
-      "runtime": "~1.5 days",
-      "cost": "~28 A100-hours (~$31 at $1.10/h) + ~$40-90 API (teacher-dependent)",
-      "description": "Live mutation/scan pipeline + LoRA training of the four base families from scratch + inference. See README 'Tier 4 stage breakdown'."
+      "runtime": "~3 h+ (mutation benchmark) + ~1-2 h on the A100 (fine-tuning demo), estimated",
+      "cost": "~$30+ API, expected ~$200 (mutation benchmark) + ~$1-2 GPU and < $1 API (fine-tuning demo), estimated",
+      "description": "Tier 4: full live mutation benchmark (3 oracles, gpt-5.4 judge, cross scans) + a fine-tuning training demo (5-step LoRA run) and released-adapter inference. Paper-scale training of the four base families is not automated; its results are verified at Tier 1. See README 'Tier 4 stage breakdown'."
     }
   },
   "allocation": {
@@ -56,12 +56,12 @@
     "reviewer_access": "On request the authors provide anonymous SSH access to a preconfigured A100 80 GB box (climbkim@kaist.ac.kr), satisfying the AE requirement that required private infrastructure be made available to reviewers."
   },
   "software_setup": {
-    "os": "Linux (macOS / Windows via WSL or Git Bash also work); container-tested on python:3.12-slim.",
-    "python": ">= 3.10 (tested 3.12; Google Colab compatible)",
+    "os": "Linux (macOS / Windows via WSL or Git Bash also work); Tier 1 tested on Ubuntu 22.04 (Python 3.12), Linux (Python 3.10), macOS (Python 3.12), Google Colab and Windows Git Bash (Python 3.14).",
+    "python": ">= 3.10 (tested 3.10, 3.12 and 3.14; Google Colab compatible); the fine-tuning extras (install.sh --finetune / --all) need 3.10-3.12 (GPU path tested with 3.10)",
     "install": {
       "./install.sh": "core (pandas, numpy, pyyaml, openpyxl) -> Tier 1 CPU verification (public infrastructure)",
-      "./install.sh --generate": "+ openai, langchain-core/-openai, langgraph, tiktoken, python-dotenv -> live mutation/scan (REQUIRES OpenAI key)",
-      "./install.sh --finetune": "+ torch, transformers, peft, trl, datasets, accelerate, vllm, huggingface_hub -> training / local scanner (REQUIRES GPU)",
+      "./install.sh --generate": "+ openai, langchain-core/-openai, langgraph, tiktoken, python-dotenv, matplotlib, snyk-agent-scan==0.4.9, skill-security-scan -> live mutation/scan (REQUIRES OpenAI key)",
+      "./install.sh --finetune": "+ torch==2.6.0, transformers==4.55.4, peft==0.20.0, trl==0.21.0, datasets==3.6.0, accelerate==1.10.1, vllm==0.8.5.post1, huggingface_hub==0.36.2, sentencepiece==0.2.0 -> training / local scanner (REQUIRES GPU)",
       "./install.sh --all": "core + generate + finetune"
     }
   }

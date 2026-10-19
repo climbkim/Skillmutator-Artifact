@@ -1,6 +1,6 @@
-# PAPER_CITED_VALUES — `tab:wild_eval` (Finding 7)
+# PAPER_CITED_VALUES — Table 7, §6.5 Further Analyses (Finding 7)
 
-Paper canonical values from `Skillmutator.tex` (label `\label{tab:wild_eval}`).
+Paper canonical values from paper Table 7, §6.5 Further Analyses.
 
 ## Header
 
@@ -12,8 +12,8 @@ Paper canonical values from `Skillmutator.tex` (label `\label{tab:wild_eval}`).
     (severity graded by Skillspector; ClawHub removes the most severe
     `malicious` tier from its public catalog, so this measures transfer to
     borderline policy-violation cases, not overt malware)
-- Scanner: Qwen2.5-Coder-7B-Instruct + LoRA (fine-tuned adapter), vLLM 0.7.3
-  (post-rerun), concurrency=1
+- Scanner: Qwen2.5-Coder-7B-Instruct + LoRA (fine-tuned adapter), served with vLLM
+  (paper scans: vLLM 0.21.0, A100 80GB; post-rerun), concurrency=1
 
 ## Per-stratum accuracy
 
@@ -44,8 +44,9 @@ A verdict counts as **correct** when:
 
 ## Methodology caveat
 
-- The suspicious side reflects the **rerun12** measurement (vLLM 0.7.3,
-  concurrency=1), which recovered originally truncated outputs from the c=4 run.
+- 12 suspicious skills that were MISSED because their first-run outputs were truncated or looped
+  (vLLM concurrency 4) were re-scanned with concurrency 1; `_judge_per_skill.csv` holds the
+  re-scanned verdicts (8 of 12 changed; first-run verdicts in `first_run_verdict`).
 - The clean side is the 100-skill sample (original 25 + 75 additional
   auto-classified clean candidates, with the ambiguous cases resolved by manual
   review); 8 of the 100 clean skills are unsupported false alarms.

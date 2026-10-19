@@ -18,8 +18,8 @@ sources. Add `src/skill_mutator/crawler/<registry>.py` with a
 Usage:
     python scripts/crawl_skills.py \\
         --registry clawhub \\
-        --target-count 50 \\
-        --output-dir ./data/train-community-50
+        --target-count 68 \\
+        --output-dir ./skills/clawhub
 """
 from __future__ import annotations
 

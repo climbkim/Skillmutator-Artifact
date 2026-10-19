@@ -7,8 +7,8 @@ library that walks the unified data tree.
 analysis/
 ├── skillmutator_utils/   # shared library (paths, refusal classification, ...)
 ├── rq1/scripts/
-│   ├── build_tab1_cross_matrix.py        # Table 1
-│   └── build_tab2_refusal_summary.py     # Table 2
+│   ├── build_tab1_cross_matrix.py        # paper Table 4
+│   └── build_tab2_refusal_summary.py     # paper Table 3
 └── rq2/scripts/
     ├── build_tab_iter_trajectory.py
     ├── build_tab_iter_trajectory_per_oracle.py
@@ -19,7 +19,7 @@ analysis/
 ## Configuration
 
 Every script reads the unified data tree at `${SKILLMUTATOR_DATA_ROOT}` (set
-via env var, defaults to `./data/skillmutator-data`).
+via env var; defaults to `demo-data/` in the skillmutator folder, the tree `run.sh` writes).
 
 ```
 ${SKILLMUTATOR_DATA_ROOT}/

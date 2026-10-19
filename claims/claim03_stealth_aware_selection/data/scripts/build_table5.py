@@ -1,4 +1,4 @@
-"""build_table5.py — Table V (select vs no-select) detection rates.
+"""build_table5.py — Table 5 (select vs no-select) detection rates.
 
 Self-contained: reads two bundled sources and re-aggregates per-scanner
 detection rates for the stealth-aware-selection vs no-select comparison.
@@ -57,9 +57,14 @@ def _row(label, path, sn, sd, nn, nd):
 
 
 def _skillscan_row():
-    """SkillScan: paired escalation to >= MEDIUM on its own scenario set."""
+    """SkillScan: paired escalation to >= MEDIUM, on the same evaluable scenarios
+    as the other scanners (the valid no-select scenarios of the verdict file)."""
     sel = list(csv.DictReader((SS_DIR / "select_perscenario.csv").open(encoding="utf-8")))
-    nsl = list(csv.DictReader((SS_DIR / "no_select_perscenario.csv").open(encoding="utf-8")))
+    valid_nsl = {(r["skill"], r["cat_folder"])
+                 for r in csv.DictReader(VERDICTS.open(encoding="utf-8"))
+                 if r["mode"] == "no-select" and r["valid"] == "1"}
+    nsl = [r for r in csv.DictReader((SS_DIR / "no_select_perscenario.csv").open(encoding="utf-8"))
+           if (r["skill"], r["cat"]) in valid_nsl]
     sn = len(sel)
     sd = sum(
         1 for r in sel

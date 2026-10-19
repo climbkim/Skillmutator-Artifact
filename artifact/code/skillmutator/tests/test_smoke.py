@@ -20,7 +20,7 @@ from pathlib import Path
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-SAMPLE_SKILL = REPO_ROOT / "examples" / "skills" / "sample_skill"
+SAMPLE_SKILL = REPO_ROOT / "examples" / "skills" / "weather-cache"
 
 
 def test_repo_layout():

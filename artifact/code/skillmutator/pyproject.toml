@@ -47,9 +47,6 @@ dev = [
 ]
 all = ["skill-mutator[crawler,analysis,dev]"]
 
-[project.scripts]
-skill-mutator = "skill_mutator.cli:main"
-
 [project.urls]
 Homepage = "https://github.com/climbkim/SkillMutator"
 Issues   = "https://github.com/climbkim/SkillMutator/issues"

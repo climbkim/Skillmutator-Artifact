@@ -1,6 +1,6 @@
 {
-  "paper_element": "Table III (tab:refusal_i4_summary) — oracle refusal behavior across 3 GPT oracles. Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
-  "source": "Skillmutator.tex \\label{tab:refusal_i4_summary} (paper L753-775)",
+  "paper_element": "Table 3 (§6.1 Experimental Setup) — oracle refusal behavior across 3 GPT oracles. Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
+  "source": "paper (camera-ready), Table 3, §6.1 Experimental Setup",
   "metrics": {
     "gpt-4o-mini/n": 51,
     "gpt-4o-mini/rate_pct": 23.53,

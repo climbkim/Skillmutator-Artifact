@@ -1,8 +1,8 @@
-# Paper-cited Values — Table VI (`tab:finetune_rq2`)
+# Paper-cited Values — Table 6 (§6.4 Fine-tuning Effectiveness)
 
-From Table VI (`tab:finetune_rq2`); four-phase consistent chain.
+From Table 6 (§6.4 Fine-tuning Effectiveness); four-phase consistent chain.
 
-## Paper Table VI (verified match)
+## Paper Table 6 (verified match)
 
 ```latex
 \begin{tabular}{lrr}

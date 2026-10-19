@@ -139,9 +139,18 @@ def main():
     p.add_argument("--max-steps", type=int, default=-1,
                    help="Cap total training steps (overrides epochs). "
                         "Use a small value (e.g. 5) for a pre-flight smoke test.")
+    p.add_argument("--train-file", help="Override data.train_file of the config.")
+    p.add_argument("--val-file", help="Override data.val_file of the config.")
+    p.add_argument("--output-dir", help="Override training.output_dir of the config.")
     args = p.parse_args()
 
     cfg = load_config(args.config)
+    if args.train_file:
+        cfg["data"]["train_file"] = args.train_file
+    if args.val_file:
+        cfg["data"]["val_file"] = args.val_file
+    if args.output_dir:
+        cfg["training"]["output_dir"] = args.output_dir
     max_len = cfg["data"]["max_seq_length"]
 
     print(f"[1/5] tokenizer: {cfg['model']['name']}")

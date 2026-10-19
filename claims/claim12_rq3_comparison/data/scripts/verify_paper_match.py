@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Figure 6 (fig:rq3_finding1) — recompute scanner detection on the GPT-5.4
+"""Figure 6 — recompute scanner detection on the GPT-5.4
 oracle benchmark (n=76, select mode, GPT-5.4 judge). Detected counts come from
 the bundled SCANNERS table (export_scanners_csv.py, mirrors the plot); each
 scanner's detection rate is recomputed as 100 * detected / n (n read from the

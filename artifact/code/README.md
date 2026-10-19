@@ -18,7 +18,7 @@ artifact/code/
 │   ├── scripts/               #   run_mutation.py, run_scanner.py, run_test_scanner.py,
 │   │                          #   consolidate_to_datatree.py, evaluate_all.py, run_all_skills.py
 │   ├── analysis/              #   paper table/figure builders (rq1/rq2) + skillmutator_utils
-│   ├── examples/skills/sample_skill/   #   bundled sample skill for the demo
+│   ├── examples/skills/weather-cache/  #   self-authored benign sample skill for the demo (MIT)
 │   ├── docs/                  #   REPRODUCE.md, USAGE.md, ARCHITECTURE.md, attack_categories.md
 │   └── run.sh                 #   one-command demo: mutate a sample skill -> scan -> build floats
 ├── finetuning-framework/      # §5-6 fine-tuning (released code; 4-phase schema) — see its docs/
@@ -57,9 +57,18 @@ Generation -> Stage 4 Skill Mutation  (+ Iterative Evasion Refinement, up to N i
 -> Multi-scanner evaluation (skill-security / Snyk / LLM scanner)
 ```
 
-Each stage function and its output directory carry the paper's name
-(`Stage1_Skill_Analysis` … `Stage4_Skill_Mutation`; IER → `.../iter_N/`), driven by
-`skillmutator/main.py`. The 13 categories (§4.1) and 9 security principles (§5) are
+The paper's stages map to the LangGraph nodes in
+`skillmutator/src/skill_mutator/process/skill_mutation.py` and their output folders:
+
+| Paper stage | Node | Output folder |
+|---|---|---|
+| Stage 1 Skill Analysis | `node_analyze_skill` | `analyze_skill/` |
+| Stage 2 Stealth-Aware Selection | `node_select_attacks` | `select_attacks/` (no-select: `select_attacks_bypass/`) |
+| Stage 3 Scenario Generation | `node_generate_scenarios` | `generate_scenarios/` |
+| Stage 4 Skill Mutation | `node_generate_skill` | `generate_skill/<category>/iter_0/` |
+| Iterative Evasion Refinement | `process/refine_mutation.py` | `generate_skill/<category>/iter_N/` (N ≥ 1) |
+
+The pipeline is driven by `skillmutator/src/skill_mutator/main.py`. The 13 categories (§4.1) and 9 security principles (§5) are
 code constants; the stealth score (§4.2) is computed in Stage 2. Fine-tuned student
 inference: `finetuning-framework/scripts/run_scanner.py`.
 
@@ -68,7 +77,7 @@ inference: `finetuning-framework/scripts/run_scanner.py`.
 ## Scanners
 
 Scanners are pluggable: subclass `BaseScanner` and `@register("name")` in
-`skillmutator/scan.py` (add `optional=True` to exclude from `--all`), implementing
+`skillmutator/src/skill_mutator/scan.py` (add `optional=True` to exclude from `--all`), implementing
 `build_command()` over the skill directory. Bundled adapters:
 
 | Adapter | Tool | Notes |
@@ -78,15 +87,18 @@ Scanners are pluggable: subclass `BaseScanner` and `@register("name")` in
 | `snyk` | Snyk Agent Scan (Apache-2.0) | PyPI `snyk-agent-scan==0.4.9`; needs a Snyk token |
 
 Held-out third-party scanners (paper eval; not bundled, installed from source;
-drivers in `external_scanners/`). Each ran static and, where supported, +LLM;
-native outputs are mapped to detected / not:
+drivers in `external_scanners/`). Each ran static and, where supported, +LLM.
+Paper Table 12 (Appendix B.5 Held-out Third-party LLM-based Scanners) uses the +LLM
+runs and counts a mutation as detected when the scanner raises any finding at
+medium severity or above (`suspicious` for Under the Hood): Sentry 68/76 = 89.5%,
+Under the Hood 58/76 = 76.3%, Cisco 53/76 = 69.7%.
 
 | Scanner | Source | Run → verdict |
 |---|---|---|
-| Sentry Skill Scanner | github.com/getsentry/skills | static (max severity) / +LLM 8-step Risk; detected = Critical/High |
-| Cisco AI Defense | github.com/cisco-ai-defense/skill-scanner | static YARA + dataflow / +LLM; detected = any Critical/High |
-| SkillScan (NMitchem) | github.com/NMitchem/SkillScan | static audit, `risk_score` → `passed` at 6.0 (Python 3.12) |
-| Under the Hood | github.com/ShoumikSaha/agent-skill-security | governance clean/suspicious/malicious; detected = not clean |
+| Sentry Skill Scanner | github.com/getsentry/skills | static (max severity) / +LLM 8-step Risk; detected = Medium or above |
+| Cisco AI Defense | github.com/cisco-ai-defense/skill-scanner | static YARA + dataflow / +LLM; detected = any Medium or above |
+| SkillScan (NMitchem) (out-of-paper) | github.com/NMitchem/SkillScan | static audit, `risk_score` → `passed` at 6.0 (Python 3.12) |
+| Under the Hood | github.com/ShoumikSaha/agent-skill-security | governance clean/suspicious/malicious; detected = suspicious or above |
 
 Held-out result tables are available from the authors on request.
 
@@ -98,12 +110,13 @@ Held-out result tables are available from the authors on request.
 pip install -r requirements.txt     # add `pip install .[finetune]` for the GPU scanner stack
 export OPENAI_API_KEY=...            # or put it in a local .env
 
-# live mutate -> scan -> build the mutation-side floats (Table III/IV/V + Figure 4)
+# live mutate -> scan -> build the mutation-side floats (Tables 3/4/5 + Figure 4)
 cd skillmutator && ./run.sh          # sample skill, gpt-4o-mini oracle+scanner+judge
 ```
 
 `skillmutator/run.sh` mutates a bundled sample skill, scans it, and regenerates
-Table III/IV/V + Figure 4 in the paper's format. Demo scale (one skill) by
+Tables 3/4/5 + Figure 4 in the paper's format (SkillScan and
+prompt-injection-detector rows: Tier 1 only). Demo scale (one skill) by
 default; the full paper numbers come from the full benchmark (17 skills x 13
 categories x 3 oracles) — see `skillmutator/docs/REPRODUCE.md`. **Requires an
 OpenAI API key** (default `gpt-4o-mini`, overridable via `--model`).
@@ -126,7 +139,7 @@ Qwen2.5-Coder-7B) to **88.2 %**, surpassing GPT-4o-mini (23.7 %) and
 GPT-5.4-mini (79.0 %) and reaching frontier GPT-5.4 (86.8 %). Rule-based
 scanners detect far less (skill-security 2.1–7.9 %, Snyk 9.2–16.7 %).
 
-Full per-table/figure numbers are in the paper (Tables III–XI, Findings 1–8).
+Full per-table/figure numbers are in the paper (Tables 3–11, Findings 1–8).
 
 ---
 

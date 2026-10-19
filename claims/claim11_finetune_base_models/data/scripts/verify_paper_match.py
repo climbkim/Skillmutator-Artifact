@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Table 6 / Figure 5 (Finding 5) — recompute per-family base-vs-fine-tuned
+"""Figure 5 (Finding 5) — recompute per-family base-vs-fine-tuned
 detection from ../derived/table6_aggregate.csv (built by build_table6.py):
 
   * base:      recomputed as base_detected / canonical_base_denominator, the
@@ -50,7 +50,7 @@ for r in csv.DictReader(io.open(csv_path, encoding="utf-8")):
 
 rc = V.verify(__file__, "metrics.json", computed,
               results_name="table6_finetune.csv",
-              title="Table 6 — base-vs-fine-tuned recomputed vs expected/metrics.json (paper golden)\n",
+              title="Figure 5 — base-vs-fine-tuned recomputed vs expected/metrics.json (paper golden)\n",
               counts=counts)
 
 # Residual relational rule (Finding 5): every family improves; Qwen strongest.

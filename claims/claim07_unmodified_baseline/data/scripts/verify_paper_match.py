@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Table X (tab:baseline_aggregate) — recompute per-scanner finding counts on the
+"""Table 10 — recompute per-scanner finding counts on the
 17 unmodified skills from the bundled summaries, then hand them to the shared
 verifier, which writes results/derived/table10_baseline_aggregate.csv and compares
 them cell-by-cell against the paper golden in expected/metrics.json (values +
@@ -9,8 +9,8 @@ Each scanner contributes 4 checked cells: skills_with (# of 17 skills with >=1
 finding), mean, max, total. The rule-based/commercial + proprietary-LLM rows are
 read from baseline_summary_manual.csv (paper-canonical, manual-verified counts);
 SkillScan (upload API) is recomputed from skillscan_unmodified_summary.csv.
-The fine-tuned Qwen row is verified separately (count_qwen_phase3_findings.py) and
-is not a checked cell here.
+The fine-tuned Qwen row is not checked: it is counted from the scanner's raw
+reports, which are not redistributed (see data/README.md, note 2).
 """
 import csv, sys
 from pathlib import Path
@@ -77,10 +77,10 @@ if sk.is_file():
     computed["SkillScan (upload API)/total"] = tot
     counts["SkillScan (upload API)/skills_with"] = (wf, 17)
 
-print("[INFO] Qwen2.5-Coder-7B fine-tuned (prefill) row verified separately via "
-      "count_qwen_phase3_findings.py; not a checked cell here.\n")
+print("[INFO] Qwen2.5-Coder-7B fine-tuned (prefill) row is not checked: its raw "
+      "scanner reports are not redistributed (see data/README.md, note 2).\n")
 
 sys.exit(V.verify(__file__, "metrics.json", computed,
                   results_name="table10_baseline_aggregate.csv",
-                  title="Table X - recomputed vs expected/metrics.json (paper golden)\n",
+                  title="Table 10 - recomputed vs expected/metrics.json (paper golden)\n",
                   counts=counts))

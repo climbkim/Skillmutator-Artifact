@@ -1,6 +1,6 @@
-# Paper-cited Values — Table IV (`tab:cross_matrix`)
+# Paper-cited Values — Table 4 (§6.2 Evaluation of Existing Install-time Scanners)
 
-From Table IV (`tab:cross_matrix`) in the paper.
+From Table 4 (§6.2 Evaluation of Existing Install-time Scanners) in the paper.
 
 ## Cell-by-cell verification target
 
@@ -16,4 +16,4 @@ From Table IV (`tab:cross_matrix`) in the paper.
 | GPT-5.4-mini | 79.17% (38/48) | 71.43% (45/63) | 78.95% (60/76) | ✅ |
 | **GPT-5.4** | **89.58%** (43/48) | **88.89%** (56/63) | **86.84%** (66/76) | ✅ |
 
-**Status**: 27/27 cells verified. Paper Table IV (L654) reports LLM-Guard as 2.1%/0.0%/4.0%; the bundle's 2.08% (1/48) and 3.95% (3/76) match at 1-decimal rounding.
+**Status**: 27/27 cells verified. Paper Table 4 (§6.2 Evaluation of Existing Install-time Scanners) reports LLM-Guard as 2.1%/0.0%/4.0%; the bundle's 2.08% (1/48) and 3.95% (3/76) match at 1-decimal rounding.

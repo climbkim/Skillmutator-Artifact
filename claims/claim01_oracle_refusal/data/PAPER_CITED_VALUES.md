@@ -1,6 +1,6 @@
-# Paper-cited Values — Table III (`tab:refusal_i4_summary`)
+# Paper-cited Values — Table 3 (§6.1 Experimental Setup)
 
-From the paper's oracle-refusal table (`tab:refusal_i4_summary`).
+From paper Table 3, §6.1 Experimental Setup.
 
 | Oracle | n | iter4_rate | per_iter | silent | explicit | partial | Verified? |
 |---|---|---|---|---|---|---|---|

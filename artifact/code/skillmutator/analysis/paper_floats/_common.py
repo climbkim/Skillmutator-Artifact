@@ -14,9 +14,9 @@ the top-level claims/ directory:
     └── figure4_ier/           figure4_ier.csv, .pdf, .png
 
 Paper float <-> builder mapping (labels aligned to the paper):
-    Table III  Safety-refusal summary   <- rq1/build_tab2_refusal_summary.py
-    Table IV   Cross-scanner detection    <- rq1/build_tab1_cross_matrix.py
-    Table V    select vs no-select        <- rq2/build_tab_select_vs_noselect.py
+    Table 3  Safety-refusal summary   <- rq1/build_tab2_refusal_summary.py
+    Table 4   Cross-scanner detection    <- rq1/build_tab1_cross_matrix.py
+    Table 5    select vs no-select        <- rq2/build_tab_select_vs_noselect.py
     Figure 4   IER per-iteration dynamics  <- rq2/build_tab_iter_trajectory.py (+ plot)
 """
 from __future__ import annotations
@@ -34,7 +34,7 @@ def run_builder(rel_builder: str, produced: list[str], float_label: str,
 
     rel_builder : builder path relative to analysis/ (its cwd at run time)
     produced    : output filenames the builder writes under its own outputs/
-    float_label : e.g. "Table III — Safety-refusal summary"
+    float_label : e.g. "Table 3 — Safety-refusal summary"
     slug        : per-float subdirectory name, e.g. "table3_refusal"
     rename      : {builder_output_name: paper_float_output_name}
     """

@@ -24,6 +24,18 @@ from .parsers import extract_scan_section
 # Lazy openai client (imported on first use)
 _client = None
 
+# HTTP statuses that retrying cannot fix: bad key, no access to the model, unknown model.
+_FATAL_STATUS = (401, 403, 404)
+
+
+class JudgeError(RuntimeError):
+    """The judge returned no verdict. `fatal` marks errors that will repeat on
+    every call (key or model access), so callers can stop at once."""
+
+    def __init__(self, msg: str, fatal: bool = False):
+        super().__init__(msg)
+        self.fatal = fatal
+
 
 def _get_client():
     global _client
@@ -72,7 +84,8 @@ def judge_call(skill: str, category: str, title: str, disguise: str,
 
     Always tries `temperature=0.0` (or `max_completion_tokens` for gpt-5/o-models)
     and `response_format=json_object`. Retries up to `retries` times on transport
-    errors with exponential backoff.
+    errors or a reply without a "detected" field, with exponential backoff.
+    Raises JudgeError when no verdict is obtained (at once for key/model errors).
     """
     prompt = JUDGE_USER_TEMPLATE.format(
         skill=skill, category=category,
@@ -81,7 +94,10 @@ def judge_call(skill: str, category: str, title: str, disguise: str,
         injected_snippet=injected_snippet,
         scan_output=(scan_text or "")[:12000] if scan_text else "(empty)",
     )
-    client = _get_client()
+    try:
+        client = _get_client()
+    except Exception as e:
+        raise JudgeError(f"cannot create the OpenAI client: {str(e)[:150]}", fatal=True) from e
     last_err = ""
     for attempt in range(retries):
         try:
@@ -98,26 +114,31 @@ def judge_call(skill: str, category: str, title: str, disguise: str,
                 kwargs["temperature"] = 0.0
             resp = client.chat.completions.create(**kwargs)
             data = json.loads(resp.choices[0].message.content or "{}")
+            if not isinstance(data, dict) or "detected" not in data:
+                raise ValueError("judge reply has no 'detected' field")
             return {
                 "detected":   bool(data.get("detected", False)),
                 "confidence": float(data.get("confidence", 0.0) or 0.0),
                 "reason":     (data.get("reason") or "")[:400],
             }
         except Exception as e:
+            if getattr(e, "status_code", None) in _FATAL_STATUS:
+                raise JudgeError(f"judge model {model}: {str(e)[:200]}", fatal=True) from e
             last_err = str(e)[:150]
             time.sleep(2 * (attempt + 1))
-    return {"detected": False, "confidence": 0.0, "reason": f"judge_error: {last_err}"}
+    raise JudgeError(f"judge model {model}: no verdict after {retries} attempts ({last_err})")
 
 
 def judge_scanner_output(oracle: str, mode: str, skill: str, cat_folder: str,
                          it: int, scanner_subpath: str,
                          scan_md_text: Optional[str] = None,
-                         *, force: bool = False) -> dict:
+                         *, force: bool = False, model: str = JUDGE_MODEL) -> dict:
     """Convenience: run v2 judge for a (oracle, mode, skill, cat, iter, scanner)
     slot in the unified tree, write judge_v2.json + verdict.json. If `scan_md_text`
     is None, reads from `scan.md` in the slot. Skips if outputs exist unless force.
 
-    Returns {detected, confidence, reason}.
+    Returns {detected, confidence, reason}. On JudgeError the slot's verdict
+    files are removed and the error is re-raised.
     """
     sc_dir = scanner_dir(oracle, mode, skill, cat_folder, it, scanner_subpath)
     judge_jp   = sc_dir / "judge_v2.json"
@@ -140,18 +161,27 @@ def judge_scanner_output(oracle: str, mode: str, skill: str, cat_folder: str,
     if len(injected) > 1500: injected = injected[:1500] + "\n...[truncated]"
 
     scan_text = extract_scan_section(scan_md_text)
-    j = judge_call(
-        skill=skill,
-        category=meta.get("cat_label", cat_folder.replace("_", " ").title()),
-        title=meta.get("scenario_title", ""),
-        disguise=meta.get("scenario_summary", ""),
-        injected_snippet=injected,
-        scan_text=scan_text,
-    )
+    try:
+        j = judge_call(
+            skill=skill,
+            category=meta.get("cat_label", cat_folder.replace("_", " ").title()),
+            title=meta.get("scenario_title", ""),
+            disguise=meta.get("scenario_summary", ""),
+            injected_snippet=injected,
+            scan_text=scan_text,
+            model=model,
+        )
+    except JudgeError:
+        # Leave no verdict behind, so an older one (e.g. the in-run decision
+        # written by populate_verdicts.py) cannot stand in for this judge.
+        for p in (judge_jp, verdict_jp):
+            p.unlink(missing_ok=True)
+        raise
     sc_dir.mkdir(parents=True, exist_ok=True)
     judge_jp.write_text(json.dumps(j, ensure_ascii=False), encoding="utf-8")
     verdict_jp.write_text(
         json.dumps({"detected": j["detected"], "criterion": "llm_v2_judge",
+                    "judge_model": model,
                     "confidence": j["confidence"], "reason": j["reason"]},
                    ensure_ascii=False, indent=2),
         encoding="utf-8",

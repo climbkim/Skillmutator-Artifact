@@ -54,6 +54,18 @@ FT_SYSTEM_PROMPT = (
 # (## Phase 4: Category Mapping).
 PHASE4_PREFIX = "## Phase 4: Category Mapping\n\n\n"
 
+# Sampling used for the paper's fine-tuned-scanner scans: greedy decoding with
+# frequency_penalty=0.3 (suppresses long repetition loops) and the Phase 4
+# prefill. max_tokens=None leaves the completion length to the server (the
+# 76-case benchmark scans); the ClawHub in-the-wild scans used max_tokens=2048.
+# The CLI below overrides these values.
+SAMPLING = {
+    "prefill": PHASE4_PREFIX,     # None disables the prefill turn
+    "temperature": 0.0,
+    "frequency_penalty": 0.3,
+    "max_tokens": None,           # completion-token cap
+}
+
 
 # ----------------------------------------------------------------------
 # Monkey-patch the baseline scanner's _call_openai to use prefilling.
@@ -86,47 +98,42 @@ def _call_openai_finetune(client, model_name: str, messages_or_prompt, use_reaso
     else:
         prompt = messages_or_prompt
 
+    prefill = SAMPLING["prefill"]
     messages = [
-        {"role": "system",    "content": FT_SYSTEM_PROMPT},
-        {"role": "user",      "content": prompt},
-        {"role": "assistant", "content": PHASE4_PREFIX},
+        {"role": "system", "content": FT_SYSTEM_PROMPT},
+        {"role": "user",   "content": prompt},
     ]
-    extra = {"continue_final_message": True, "add_generation_prompt": False}
+    extra = {}
+    if prefill:
+        messages.append({"role": "assistant", "content": prefill})
+        extra = {"continue_final_message": True, "add_generation_prompt": False}
+
+    sampling = {"frequency_penalty": SAMPLING["frequency_penalty"]}
+    if SAMPLING["max_tokens"]:
+        sampling["max_tokens"] = SAMPLING["max_tokens"]
+
+    def _create(msgs, body, **kw):
+        return client.chat.completions.create(
+            model=model_name, messages=msgs, **kw, **sampling,
+            **({"extra_body": body} if body else {}),
+        )
 
     try:
         if use_reasoning:
-            response = client.chat.completions.create(
-                model=model_name,
-                messages=messages,
-                reasoning_effort="medium",
-                extra_body=extra,
-            )
+            response = _create(messages, extra, reasoning_effort="medium")
         else:
-            response = client.chat.completions.create(
-                model=model_name,
-                messages=messages,
-                temperature=0.0,  # deterministic, matches training-time inference
-                extra_body=extra,
-            )
+            response = _create(messages, extra, temperature=SAMPLING["temperature"])
     except Exception as e:
         err = str(e).lower()
         if "temperature" in err and "unsupported" in err:
             print(f"\n    [!] Model '{model_name}' does not support temperature; using default.")
-            response = client.chat.completions.create(
-                model=model_name,
-                messages=messages,
-                extra_body=extra,
-            )
-        elif "extra_body" in err or "continue_final_message" in err or "unexpected keyword" in err:
+            response = _create(messages, extra)
+        elif prefill and ("extra_body" in err or "continue_final_message" in err or "unexpected keyword" in err):
             # Endpoint does not support assistant prefilling -- fall back
             # to a plain call without the prefill turn.
             print(f"\n    [!] Endpoint does not support assistant prefill; falling back without it.")
-            messages_fallback = messages[:-1]  # drop the assistant prefill turn
-            response = client.chat.completions.create(
-                model=model_name,
-                messages=messages_fallback,
-                temperature=0.0,
-            )
+            prefill = None
+            response = _create(messages[:-1], {}, temperature=SAMPLING["temperature"])
         else:
             raise
 
@@ -134,7 +141,7 @@ def _call_openai_finetune(client, model_name: str, messages_or_prompt, use_reaso
     raw = response.choices[0].message.content or ""
     # Restore the prefix in the saved markdown so the final report carries
     # the canonical Phase 4 heading.
-    content = PHASE4_PREFIX + raw
+    content = (prefill or "") + raw
     return {
         "content":           content,
         "prompt_tokens":     usage.prompt_tokens if usage else 0,
@@ -160,10 +167,25 @@ if __name__ == "__main__":
     parser.add_argument("-r", "--reasoning", action="store_true")
     parser.add_argument("-o", "--output-dir", type=str, default=None)
     parser.add_argument("-u", "--base-url", type=str, default=None)
-    parser.add_argument("-t", "--max-tokens", type=int, default=None)
+    parser.add_argument("-t", "--max-tokens", type=int, default=None,
+                        help="Per-request INPUT token budget used to chunk large skills.")
+    parser.add_argument("--prefill", type=str, default=PHASE4_PREFIX,
+                        help="Assistant-turn prefix (Forced Prefix Pre-filling).")
+    parser.add_argument("--no-prefill", action="store_true",
+                        help="Disable the prefill turn.")
+    parser.add_argument("--temperature", type=float, default=SAMPLING["temperature"])
+    parser.add_argument("--frequency-penalty", type=float, default=SAMPLING["frequency_penalty"])
+    parser.add_argument("--max-new-tokens", type=int, default=None,
+                        help="Completion-token cap (default: none; 2048 for the ClawHub scans).")
 
     args = parser.parse_args()
     use_reasoning = args.reasoning
+    SAMPLING.update(
+        prefill=None if args.no_prefill else args.prefill,
+        temperature=args.temperature,
+        frequency_penalty=args.frequency_penalty,
+        max_tokens=args.max_new_tokens,
+    )
 
     provider = args.provider
     if not provider:

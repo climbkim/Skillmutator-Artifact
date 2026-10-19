@@ -1,6 +1,6 @@
 # Cross-oracle aggregate summary
 
-paper Tab. III denominators: gpt-4o-mini n=48, gpt-5.4-mini n=63, gpt-5.4 n=76 (evaluable_per_oracle, applies last_good_carry).
+paper Table 4 denominators: gpt-4o-mini n=48, gpt-5.4-mini n=63, gpt-5.4 n=76 (evaluable_per_oracle, applies last_good_carry).
 
 ## Detection rate matrix (paper criterion)
 
@@ -52,4 +52,4 @@ Confirms LOW/CRITICAL absence and MEDIUM rarity.
 1. **Snyk LOW/CRITICAL are not emitted** for any scenario across all 3 oracle datasets. MEDIUM appears only in 4 baseline reports (W007/W013 corner cases). HIGH dominates by design.
 2. **ss aggregate mutation count is dominated by baseline.** Mutation contributes only a small delta on top of large pre-existing finding counts in the unmodified Anthropic skills.
 3. **SkillScan verdicts cluster at SAFE.** The handful of LOW/CRITICAL come from explicit primitive detection (e.g., `uname -a`, `window.localStorage`), not from cross-modal semantic analysis.
-4. **LLM scanners stay the gold standard.** Self-scanner reaches near-frontier detection on all oracle datasets; cross-LLM rates fall along the capability-parity ordering (paper Tab. III).
+4. **LLM scanners stay the gold standard.** Self-scanner reaches near-frontier detection on all oracle datasets; cross-LLM rates fall along the capability-parity ordering (paper Table 4).

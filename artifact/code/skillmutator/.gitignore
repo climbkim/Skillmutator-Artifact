@@ -9,3 +9,7 @@ analysis/rq2/scripts/outputs/
 **/__pycache__/
 *.pyc
 .env
+
+# Skill pool fetched by run.sh --crawl (third-party skill bodies; never commit)
+skills/*
+!skills/README.md

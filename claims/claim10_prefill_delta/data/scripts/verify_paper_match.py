@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Figure 5 (fig:prefill_delta_comparison) — extract the plotted detection-rate
+"""Figure 5 — extract the plotted detection-rate
 arrays from plot_prefill_delta.py (four base-model families x {base, no-prefill,
 Phase-4-prefill} x two judge panels), recompute the prefill delta
 (delta = prefill - no-prefill) per family/judge, then hand both to the shared
@@ -7,7 +7,7 @@ verifier, which writes results/derived/fig5_prefill_delta.csv and compares them
 cell-by-cell against the paper golden in expected/metrics.json (values +
 tolerances live there).
 
-Residual relational rule (Finding 6): under the GPT-5.4 judge, Phase-4 prefill
+Residual relational rule (Finding 5): under the GPT-5.4 judge, Phase-4 prefill
 helps Qwen (delta > 0) but hurts the other three families (delta < 0). The
 expected direction is read from the golden's own delta signs, so no fixed
 numbers live in this script.
@@ -46,7 +46,7 @@ rc = V.verify(__file__, "metrics.json", computed,
               results_name="fig5_prefill_delta.csv",
               title="Figure 5 — prefill delta recomputed vs expected/metrics.json (paper golden)\n")
 
-# Residual relational rule (Finding 6, GPT-5.4 judge): prefill helps Qwen,
+# Residual relational rule (Finding 5, GPT-5.4 judge): prefill helps Qwen,
 # hurts Llama/Mistral/Gemma. Expected direction taken from the golden's signs.
 GOLD = json.load(io.open(Path(__file__).resolve().parents[2] / "expected" / "metrics.json",
                          encoding="utf-8"))["metrics"]

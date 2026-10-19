@@ -10,7 +10,8 @@ denominator-handling rules used by the paper:
                      iter is measured independently.
 
   Rule 2 (fixed denom): denominator is the set of "valid" scenarios (default:
-                        iter_0 == 'normal'). At any iter K, refusal / missing
+                        'evaluable', the scenarios with at least one scanned
+                        refusal-free mutation). At any iter K, refusal / missing
                         is counted as undetected (False). Used for fair
                         comparison against a fixed scenario set.
 """
@@ -19,7 +20,7 @@ from typing import Optional
 
 from .classifications import classify_all
 from .data_access import iter_scenarios, list_iters, load_verdict
-from .paths import MAX_ITER_BY_MODE
+from .paths import MAX_ITER_BY_MODE, scenario_dir
 
 
 # ---------------------------------------------------------------------------
@@ -92,11 +93,21 @@ def per_iter_classification_counts(oracle: str, mode: str) -> dict:
 # Denominator filters
 # ---------------------------------------------------------------------------
 
-def valid_scenarios(oracle: str, mode: str, *, criterion: str = "last_good_from_iter_0") -> set[tuple[str, str]]:
+def _scanned(oracle: str, mode: str, sk: str, cat: str, it: int) -> bool:
+    """True when iter `it` of the scenario has at least one scanner verdict."""
+    return any(scenario_dir(oracle, mode, sk, cat, it).glob("**/verdict.json"))
+
+
+def valid_scenarios(oracle: str, mode: str, *, criterion: str = "evaluable") -> set[tuple[str, str]]:
     """Return the canonical denominator set for an analysis.
 
     criterion ∈ {
-        'last_good_from_iter_0' (default): scenarios where iter_0 produced a
+        'evaluable' (default, the paper's evaluation set, §6.1): scenarios
+            with at least one refusal-free mutation that was scanned. Each is
+            evaluated on its most recent refusal-free mutation. Yields the
+            paper's n = 48 / 63 / 76 (select: gpt-4o-mini / gpt-5.4-mini /
+            gpt-5.4) and 219 (gpt-5.4 no-select).
+        'last_good_from_iter_0': scenarios where iter_0 produced a
             real (non-refusal) mutation. These are scenarios with a defined
             evaluation point at every iter K via carry-forward from
             last_good_iter (= iter_0 when later iters refuse).
@@ -104,8 +115,8 @@ def valid_scenarios(oracle: str, mode: str, *, criterion: str = "last_good_from_
             referred to *experiments* iter_0, NOT the dataset's iter_0.
             (The dataset's published iter_0 SKILL.md is actually the recovered
             last_good_iter from experiments.)
-            Yields paper conventions: 215 noselect, 76 select gpt-5.4,
-            63 gpt-5.4-mini, 47 gpt-4o-mini.
+            Yields 215 noselect, 76 select gpt-5.4, 63 gpt-5.4-mini,
+            47 gpt-4o-mini (not the paper set; kept for comparison).
         'all_attempted'  : every (skill, cat) found in experiments
                            (silent failures included; 51/63/76 select, 221 noselect)
         'refusal_clean'  : every iter [0..max] is normal (strictest)
@@ -117,6 +128,10 @@ def valid_scenarios(oracle: str, mode: str, *, criterion: str = "last_good_from_
     max_iter = MAX_ITER_BY_MODE[mode]
     if criterion == "all_attempted":
         return all_scen
+    if criterion == "evaluable":
+        return {(sk, cat) for (sk, cat) in all_scen
+                if any(cls_map.get((sk, cat, it)) == "normal" and _scanned(oracle, mode, sk, cat, it)
+                       for it in range(max_iter + 1))}
     if criterion in ("last_good_from_iter_0", "iter_0_normal"):  # alias for legacy
         return {(sk, cat) for (sk, cat) in all_scen
                 if cls_map.get((sk, cat, 0)) == "normal"}
@@ -154,10 +169,12 @@ def rule2_verdict(cls_map: dict, sk: str, cat: str, it: int, verdict: Optional[b
 
 def aggregate_per_iter(oracle: str, mode: str, scanner_subpath: str, *,
                        rule: str = "carry_forward",
-                       denom: str = "last_good_from_iter_0") -> list[dict]:
+                       denom: str = "evaluable") -> list[dict]:
     """Compute per-iter detection rate using the specified rule + denominator.
 
-    Returns rows: [{iter, n, detected, normal_undet, carried_forward, rate_pct}, ...]
+    Returns rows: [{iter, n, detected, normal_undet, carried_forward, rate_pct,
+    verdicts}, ...]; `verdicts` counts the scenarios that had a verdict file
+    (0 for every iter = the scanner did not run).
 
     rule ∈ {
         'carry_forward' (default, paper's RQ2 approach): denom is fixed; at
@@ -176,19 +193,21 @@ def aggregate_per_iter(oracle: str, mode: str, scanner_subpath: str, *,
     rows = []
     max_iter = MAX_ITER_BY_MODE[mode]
     for it in range(max_iter + 1):
-        det = nd = ref_or_miss = carried = 0
+        det = nd = ref_or_miss = carried = seen = 0
         if rule == "rule_1":
             iter_scen = {(sk, cat) for (sk, cat) in scen_set
                          if rule1_eligible(cls_map, sk, cat, it)}
             n = len(iter_scen)
             for (sk, cat) in iter_scen:
                 v = load_verdict(oracle, mode, sk, cat, it, scanner_subpath)
+                seen += v is not None
                 if v is True: det += 1
                 else: nd += 1
         elif rule == "rule_2":
             n = len(scen_set)
             for (sk, cat) in scen_set:
                 v = load_verdict(oracle, mode, sk, cat, it, scanner_subpath)
+                seen += v is not None
                 cls = cls_map.get((sk, cat, it))
                 if cls == "normal" and v is True:
                     det += 1
@@ -207,6 +226,7 @@ def aggregate_per_iter(oracle: str, mode: str, scanner_subpath: str, *,
                 if lg is None: continue
                 if lg != it: carried += 1
                 v = load_verdict(oracle, mode, sk, cat, lg, scanner_subpath)
+                seen += v is not None
                 if v is True: det += 1
                 else: nd += 1
         rate = det / n * 100 if n else 0.0
@@ -215,22 +235,25 @@ def aggregate_per_iter(oracle: str, mode: str, scanner_subpath: str, *,
             "normal_undet": nd, "refusal_or_missing": ref_or_miss,
             "carried_forward": carried,
             "rate_pct": round(rate, 2),
+            "verdicts": seen,
         })
     return rows
 
 
 def aggregate_scenario_final(oracle: str, mode: str, scanner_subpath: str, *,
-                             denom: str = "last_good_from_iter_0",
+                             denom: str = "evaluable",
                              max_iter_cap: Optional[int] = None) -> dict:
     """Compute a single scenario-final detection rate. The verdict per scenario
     is taken at last_good_iter (= highest iter ≤ max_iter_cap with class=='normal').
 
-    Returns: {n, detected, rate_pct}.
+    A scenario without a verdict file counts as not detected (paper rule).
+    Returns: {n, detected, rate_pct, verdicts}; `verdicts` counts the scenarios
+    that had a verdict file, so verdicts == 0 means the scanner did not run.
     """
     cls_map = classify_all(oracle, mode)
     scen_set = valid_scenarios(oracle, mode, criterion=denom)
     cap = max_iter_cap if max_iter_cap is not None else MAX_ITER_BY_MODE[mode]
-    det = 0; n = len(scen_set)
+    det = seen = 0; n = len(scen_set)
     for (sk, cat) in scen_set:
         lg = None
         for it in range(cap + 1):
@@ -238,5 +261,13 @@ def aggregate_scenario_final(oracle: str, mode: str, scanner_subpath: str, *,
                 lg = it
         if lg is None: continue
         v = load_verdict(oracle, mode, sk, cat, lg, scanner_subpath)
+        seen += v is not None
         if v is True: det += 1
-    return {"n": n, "detected": det, "rate_pct": round(det / n * 100, 2) if n else 0.0}
+    return {"n": n, "detected": det, "rate_pct": round(det / n * 100, 2) if n else 0.0,
+            "verdicts": seen}
+
+
+def cell_ran(result: dict) -> bool:
+    """False when a cell has no scenarios or no verdict at all (scanner not run
+    or unavailable); builders print such a cell as "n/a" instead of 0%."""
+    return bool(result.get("n")) and bool(result.get("verdicts", 1))

@@ -43,3 +43,6 @@ skills5/
 *.tar.gz
 *.safetensors
 *.bin
+
+# Local file-by-file review page (not part of the artifact)
+.review/

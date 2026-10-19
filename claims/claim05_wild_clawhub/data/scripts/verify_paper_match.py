@@ -1,35 +1,21 @@
 # -*- coding: utf-8 -*-
-"""Table VII (Finding 7, wild ClawHub) — recompute per-stratum accuracy and the
+"""Table 7 (Finding 7, wild ClawHub) — recompute per-stratum accuracy and the
 aggregate (Accuracy / FPR) over the n=200 evaluation set from the bundled judge
 verdicts, then hand the recomputed metrics to the shared verifier, which writes
 results/derived/table7_wild_eval.csv and compares them cell-by-cell against the
 paper golden in expected/metrics.json (values + tolerances live there).
 
 Per-stratum accuracy: clean = not a false alarm; suspicious = lenient D+P
-(DETECTED or PARTIAL), paper protocol. Suspicious side uses the rerun12
-measurement (_rerun12_new_verdicts.json merged on top of the base per-skill CSV).
+(DETECTED or PARTIAL), paper protocol. _judge_per_skill.csv holds the final
+verdicts (12 suspicious skills re-scanned; see data/README.md).
 """
-import csv, io, json, sys
+import csv, io, sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))   # claims/
 import _verify_common as V
 
 D = Path(__file__).resolve().parents[1] / "derived"            # data/derived (inputs)
 data = list(csv.DictReader(io.open(D / "_judge_per_skill.csv", encoding="utf-8")))
-
-# rerun12 recovered verdicts (suspicious side only)
-rerun = D / "_rerun12_new_verdicts.json"
-rerun_map = {}
-if rerun.exists():
-    for it in json.load(io.open(rerun, encoding="utf-8")):
-        if it.get("slug") and it.get("verdict"):
-            rerun_map[it["slug"]] = it["verdict"]
-n_applied = 0
-for r in data:
-    if r["group"] == "suspicious" and r["slug"] in rerun_map:
-        r["verdict"] = rerun_map[r["slug"]]
-        n_applied += 1
-print(f"rerun12 recovered verdicts applied: {n_applied}/12\n")
 
 
 def correct(r):
@@ -63,5 +49,5 @@ counts["aggregate/fpr"] = (n_fa, len(clean))
 
 sys.exit(V.verify(__file__, "metrics.json", computed,
                   results_name="table7_wild_eval.csv",
-                  title="Table VII — recomputed vs expected/metrics.json (paper golden)\n",
+                  title="Table 7 — recomputed vs expected/metrics.json (paper golden)\n",
                   counts=counts))

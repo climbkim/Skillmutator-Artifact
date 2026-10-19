@@ -9,7 +9,7 @@ populate -> build without the full author-side data tree.
 
 Usage:
     python scripts/populate_verdicts.py \
-        --comparison-csv demo-results/comparison_sample_skill.csv \
+        --comparison-csv demo-results/comparison_weather-cache.csv \
         --oracle gpt-4o-mini --mode select \
         --data-root demo-data --scanner-model gpt-4o-mini
 """
@@ -38,7 +38,7 @@ def main() -> int:
 
     data_root = Path(args.data_root)
     self_scanner = f"llm/{args.scanner_model}-self"
-    written = 0
+    written = snyk_unavailable = 0
     with open(args.comparison_csv, encoding="utf-8-sig") as f:
         for row in csv.DictReader(f):
             skill = row.get("skill_name", "").strip()
@@ -46,28 +46,26 @@ def main() -> int:
             cat = CAT_FOLDER_FROM_LABEL.get(label, label.lower().replace(" ", "_"))
             it = int(row.get("mutation_iteration", 0) or 0)
             cell = data_root / args.oracle / args.mode / skill / cat / f"iter_{it}"
-            # A comparison-CSV row means a real mutation was produced -> "normal".
-            # classify_all() reads meta.json["classification"]; consolidate does not
-            # write it, so set it here (proper fix: emit it from consolidate_to_datatree).
-            meta_p = cell / "meta.json"
-            if meta_p.is_file():
-                try:
-                    meta = json.loads(meta_p.read_text(encoding="utf-8"))
-                except Exception:
-                    meta = {}
-                meta.setdefault("classification", "normal")
-                meta_p.write_text(json.dumps(meta, indent=2), encoding="utf-8")
+            # meta.json["classification"] is written by consolidate_to_datatree.py.
             cells = {
                 "ss":   _to_bool(row.get("ss_detected", "")),
-                "snyk": _to_bool(row.get("snyk_detected", "")) if _to_bool(row.get("snyk_available", "")) else False,
                 self_scanner: _to_bool(row.get("llm_detected", "")),
             }
+            # No Snyk verdict when Snyk could not run (no or rejected token, not
+            # installed, ...): the tables then show the Snyk cell as n/a, not 0%.
+            if _to_bool(row.get("snyk_available", "")):
+                cells["snyk"] = _to_bool(row.get("snyk_detected", ""))
+            else:
+                snyk_unavailable += 1
             for subpath, detected in cells.items():
                 out = cell / subpath / "verdict.json"
                 out.parent.mkdir(parents=True, exist_ok=True)
                 out.write_text(json.dumps({"detected": detected}), encoding="utf-8")
                 written += 1
     print(f"[populate_verdicts] wrote {written} verdict.json cells under {data_root}/{args.oracle}/{args.mode}")
+    if snyk_unavailable:
+        print(f"[populate_verdicts] Snyk was unavailable for {snyk_unavailable} cell(s) "
+              "(missing or rejected SNYK_TOKEN, or scanner not installed): no Snyk verdict written.")
     return 0
 
 

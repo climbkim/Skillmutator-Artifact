@@ -11,6 +11,7 @@
 #   ./install.sh --all        core + generate + finetune
 #
 # Env: PYTHON=<interpreter> to pick the base Python (default: python3).
+#      --finetune / --all need Python 3.10-3.12, e.g. PYTHON=python3.12.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -22,13 +23,25 @@ for arg in "$@"; do
     --finetune) WANT_FINETUNE=1 ;;
     --all)      WANT_GENERATE=1; WANT_FINETUNE=1 ;;
     -h|--help)
-      sed -n '3,13p' "$0" | sed 's/^# \{0,1\}//'
+      sed -n '3,14p' "$0" | sed 's/^# \{0,1\}//'
       exit 0 ;;
     *) echo "unknown option: $arg (try --help)"; exit 2 ;;
   esac
 done
 
 PY="${PYTHON:-python3}"
+if [ "$WANT_FINETUNE" = 1 ]; then
+  # The pinned fine-tuning set below (vllm 0.8.5, sentencepiece 0.2.0) has no
+  # Python 3.13+ builds; check before creating the venv, not halfway through pip.
+  if ! "$PY" -c 'import sys; sys.exit(0 if (3, 10) <= sys.version_info[:2] <= (3, 12) else 1)'; then
+    _v="$("$PY" -c 'import sys; print("%d.%d" % sys.version_info[:2])' 2>/dev/null || echo unknown)"
+    echo "ERROR: the fine-tuning extras (--finetune / --all) need Python 3.10-3.12; '$PY' is $_v." >&2
+    echo "       Re-run with a supported interpreter, e.g.  PYTHON=python3.12 ./install.sh --all" >&2
+    echo "       (remove .venv first if it was created with another Python)." >&2
+    echo "       Tier 1 and --generate work with any Python >= 3.10." >&2
+    exit 1
+  fi
+fi
 echo "== creating virtual environment (.venv) =="
 # On Debian / Ubuntu / Google Colab the stdlib `venv` ships as a separate package,
 # so `python3 -m venv` can fail with "No module named ensurepip". Catch that and
@@ -77,7 +90,11 @@ fi
 
 if [ "$WANT_FINETUNE" = 1 ]; then
   echo "== installing fine-tuning / local-scanner extras (GPU, heavy) =="
-  python -m pip install torch transformers peft trl datasets accelerate vllm huggingface_hub sentencepiece
+  # Pinned, tested set (2026-10, RTX 3090 / driver 560, CUDA 12.x): torch 2.6.0 is the
+  # CUDA 12.4 wheel and runs on drivers >= 525. Unpinned latest pulls a CUDA 13 torch
+  # (needs driver >= 580) and an mcp version that breaks snyk-agent-scan.
+  python -m pip install torch==2.6.0 transformers==4.55.4 peft==0.20.0 trl==0.21.0 \
+    datasets==3.6.0 accelerate==1.10.1 vllm==0.8.5.post1 huggingface_hub==0.36.2 sentencepiece==0.2.0
 fi
 
 echo

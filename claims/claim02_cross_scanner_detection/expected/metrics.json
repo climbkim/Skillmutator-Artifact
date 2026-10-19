@@ -1,6 +1,6 @@
 {
-  "paper_element": "Table IV (tab:cross_matrix) — cross-scanner detection matrix, 9 scanner rows x 3 GPT-oracle columns = 27 percentage cells. Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
-  "source": "Skillmutator.tex \\label{tab:cross_matrix} (paper L707-735; 3 GPT oracles, incl. SkillScan + PI Detectors)",
+  "paper_element": "Table 4 (§6.2 Evaluation of Existing Install-time Scanners) — cross-scanner detection matrix, 9 scanner rows x 3 GPT-oracle columns = 27 percentage cells. Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
+  "source": "paper (camera-ready), Table 4, §6.2 Evaluation of Existing Install-time Scanners; 3 GPT oracles, incl. SkillScan + PI Detectors",
   "metrics": {
     "skill-security-scan/gpt-4o-mini": 2.08,
     "skill-security-scan/gpt-5.4-mini": 6.35,

@@ -2,7 +2,8 @@
 
 ## (1) Paper location
 
-- **Finding 5**, Figure `fig:prefill_delta_comparison`: detection rate (%) of four
+- **Paper location**: Figure 5, §6.4 Fine-tuning Effectiveness (Finding 5)
+- **Finding 5**, Figure 5: detection rate (%) of four
   base open-weight models and their fine-tuned variants on the 76-case SkillMutator
   benchmark, under the GPT-5.4 judge. The prefill column forces the
   `## Phase 4: Category Mapping` header as the assistant-turn prefix (the paper refers to this phase as Attack Category Labeling).

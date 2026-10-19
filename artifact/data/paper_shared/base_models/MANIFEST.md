@@ -8,10 +8,10 @@ LoRA adapter on Hugging Face (huggingface.co/climbkim/skillmutator-scanner-adapt
 
 | ID | HF Hub | Size (BF16) | Used by |
 |---|---|---|---|
-| Qwen2.5-Coder-7B-Instruct | `Qwen/Qwen2.5-Coder-7B-Instruct` | ~15 GB | Table VI Qwen row · Table VII · Table VIII Qwen row · Figure 5 |
-| Llama-3.1-8B-Instruct | `unsloth/Meta-Llama-3.1-8B-Instruct` (community mirror; original is gated) | ~16 GB | Table VI Llama row |
-| Mistral-7B-Instruct-v0.3 | `mistralai/Mistral-7B-Instruct-v0.3` | ~14 GB | Table VI Mistral row |
-| Gemma-2-9b-it | `google/gemma-2-9b-it` | ~18 GB | Table VI Gemma row |
+| Qwen2.5-Coder-7B-Instruct | `Qwen/Qwen2.5-Coder-7B-Instruct` | ~15 GB | Table 6 · Table 7 · Table 8 Qwen row · Figure 5 |
+| Llama-3.1-8B-Instruct | `unsloth/Meta-Llama-3.1-8B-Instruct` (community mirror; original is gated) | ~16 GB | Figure 5 Llama bars |
+| Mistral-7B-Instruct-v0.3 | `mistralai/Mistral-7B-Instruct-v0.3` | ~14 GB | Figure 5 Mistral bars |
+| Gemma-2-9b-it | `google/gemma-2-9b-it` | ~18 GB | Figure 5 Gemma bars |
 
 ## Reproduction download
 
@@ -30,18 +30,19 @@ hf download google/gemma-2-9b-it --local-dir <dest>/Gemma-2-9b-it
 | Qwen fine-tuned adapter (Hugging Face) | Qwen2.5-Coder-7B-Instruct | 64 / 128 | down/gate/up/q/k/v/o_proj |
 | Llama fine-tuned adapter (Hugging Face) | Llama-3.1-8B-Instruct | 64 / 128 | down/gate/up/q/k/v/o_proj |
 | Mistral fine-tuned adapter (Hugging Face) | Mistral-7B-Instruct-v0.3 | 64 / 128 | down/gate/up/q/k/v/o_proj |
+| Gemma fine-tuned adapter (Hugging Face) | Gemma-2-9b-it | 64 / 128 | down/gate/up/q/k/v/o_proj |
 | Phase 4 (no refine) adapter (Hugging Face) | Qwen2.5-Coder-7B-Instruct | 64 / 128 | down/gate/up/q/k/v/o_proj |
 
 The Phase 4 (no refine) adapter uses Qwen base — same as the fine-tuned adapter, with
 deterministic refinement disabled in training data (160/1219 entries rebuilt from `.pre_refine.bak`).
 
-## vLLM serving (verified inference stack)
+## vLLM serving
 
 ```bash
-# torch 2.5.1+cu121 + vllm 0.19.1 (cross-oracle / fine-tuned verified)
-pip install torch==2.5.1 torchvision==0.20.1 --index-url https://download.pytorch.org/whl/cu121
-pip install "vllm==0.19.1"
-pip install "transformers==4.46.3"  # required for vLLM 0.6.6 / 0.19.1 compat
+# Install the tested stack with ./install.sh --finetune
+# (torch 2.6.0, vllm 0.8.5.post1, transformers 4.55.4; Python 3.10-3.12).
+# The paper's scans ran vLLM 0.19.1 on one A100 80GB (vLLM 0.19.1 itself
+# requires torch 2.10.0 and transformers >= 4.56).
 
 # Launch with adapter (note: --served-model-name MUST differ from --lora-modules key
 # to avoid same-name collision that silently falls back to base model)
@@ -53,7 +54,3 @@ python -m vllm.entrypoints.openai.api_server \
     --max-model-len 32768 --gpu-memory-utilization 0.85 --dtype bfloat16 \
     --host 0.0.0.0 --port 8000
 ```
-
-⚠️ Driver requirement: NVIDIA driver ≥ 525.60.13 for CUDA 12.1 forward-compat
-(A100 vast.ai instances satisfy). For older drivers, fall back to torch 2.4+cu118
-+ vllm 0.5.4.

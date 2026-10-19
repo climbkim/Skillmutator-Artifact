@@ -2,8 +2,8 @@
 
 After the May-2026 consolidation, the data tree at ${SKILLMUTATOR_DATA_ROOT}/
 is the single source of truth. All runtime analyses read from it; the original
-scattered scanner outputs (in skillmutator-github/experiments and
-RQ2/_extension/) have been deleted, so the tree is the only persistent state.
+author-side scanner outputs it was built from are not shipped, so the tree is
+the only state the analyses read.
 
 Tree:
   Skillmutator-data/
@@ -26,11 +26,11 @@ import os
 from pathlib import Path
 
 # === unified tree (the source of truth) ===
-# Override via $SKILLMUTATOR_DATA_ROOT to point at your local Skillmutator-data
-# tree. The default below is the relative path used inside this repo for CI
-# smoke tests; reproducing the paper requires a populated data tree (see
-# docs/REPRODUCE.md in the repo root).
-DATA_ROOT = Path(os.environ.get("SKILLMUTATOR_DATA_ROOT", "./data/skillmutator-data"))
+# Override via $SKILLMUTATOR_DATA_ROOT. The default is the tree run.sh writes,
+# demo-data/ in the skillmutator folder (absolute, so it does not depend on the
+# working directory); see docs/REPRODUCE.md.
+DATA_ROOT = Path(os.environ.get("SKILLMUTATOR_DATA_ROOT",
+                                str(Path(__file__).resolve().parents[2] / "demo-data")))
 
 # === enumerations ===
 ORACLES = ["gpt-4o-mini", "gpt-5.4-mini", "gpt-5.4"]

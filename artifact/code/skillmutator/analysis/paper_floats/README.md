@@ -16,9 +16,9 @@ analysis/paper_floats/outputs/
 
 | Script | Paper float | Underlying builder |
 |---|---|---|
-| `table3_refusal.py`       | **Table III** — safety-refusal summary        | `rq1/scripts/build_tab2_refusal_summary.py` |
-| `table4_cross_scanner.py` | **Table IV** — cross-scanner detection matrix  | `rq1/scripts/build_tab1_cross_matrix.py` |
-| `table5_select.py`        | **Table V** — select vs no-select              | `rq2/scripts/build_tab_select_vs_noselect.py` |
+| `table3_refusal.py`       | **Table 3** — safety-refusal summary        | `rq1/scripts/build_tab2_refusal_summary.py` |
+| `table4_cross_scanner.py` | **Table 4** — cross-scanner detection matrix  | `rq1/scripts/build_tab1_cross_matrix.py` |
+| `table5_select.py`        | **Table 5** — select vs no-select              | `rq2/scripts/build_tab_select_vs_noselect.py` |
 | `figure4_ier.py`          | **Figure 4** — IER per-iteration dynamics      | `rq2/scripts/build_tab_iter_trajectory.py` + `plot_iter_trajectory.py` |
 
 `../../run.sh` runs the whole flow (mutate -> scan -> consolidate -> populate ->
@@ -26,5 +26,5 @@ build) and leaves only these per-float folders as the result. To rebuild the
 floats alone from an existing data tree, set `$SKILLMUTATOR_DATA_ROOT` and run
 the scripts individually.
 
-The fine-tuned-scanner floats (Figures 5–6, Tables VI/VII/X/XI) are built on the
+The fine-tuned-scanner floats (Figures 5–6, Tables 6/7/10/11) are built on the
 fine-tuning side — see `../../../finetuning-framework/`.

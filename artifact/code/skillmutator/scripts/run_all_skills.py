@@ -1,6 +1,10 @@
 """
 run_all_skills.py — Run main.py sequentially or in parallel for all folders under skills/
 
+LEGACY: kept from the pre-artifact repository layout and not used by the artifact.
+It expects skillmutator/main.py at the repository root, which this layout does not
+have. Use ./run.sh (see docs/REPRODUCE.md) to mutate, scan, judge and build the floats.
+
 Usage:
     python run_all_skills.py                          # run all skills (select ON, parallel)
     python run_all_skills.py pdf claude-api           # run specific skills only

@@ -1,17 +1,17 @@
 # Raw Scan Pointers — Figure 6 RQ3 Finetune Comparison
 
 This figure aggregates detection rates from 8 scanners on the n=76 GPT-5.4 oracle
-benchmark. The underlying scan trees are already preserved in other bundle
-folders to avoid duplication. `scanners.csv` (in this folder) is the
-machine-readable summary; raw scan.md files live at the paths below.
+benchmark. The underlying scan trees are not redistributed. `scanners.csv` (in this folder) is the
+machine-readable summary; the table below names each scanner's source, and the
+cross-check paths point to the aggregates shipped with other claims.
 
 ## Per-scanner source (one row of `scanners.csv` per scanner)
 
 | Scanner | Group | Raw scan path |
 |---|---|---|
-| `skill-security-scan` | rule | `../../table3_cross_scanner_matrix/raw/skill-security-scan/baseline/` + the source scan tree (not redistributed) |
-| `Snyk Agent Scan` | rule | `../../table3_cross_scanner_matrix/raw/snyk/` + the source scan tree (not redistributed) |
-| `SkillScan` | rule | `../../table3_cross_scanner_matrix/raw/skillscan/` (API responses) |
+| `skill-security-scan` | rule | skill-security-scan reports on the unmodified and mutated skills — source not redistributed |
+| `Snyk Agent Scan` | rule | Snyk Agent Scan reports on the unmodified and mutated skills — source not redistributed |
+| `SkillScan` | rule | SkillScan API responses — source not redistributed |
 | `GPT-4o-mini` | proprietary | `gpt-4o-mini scan (last iteration, select mode) — source not redistributed` |
 | `GPT-5.4-mini` | proprietary | `gpt-5.4-mini scan (last iteration, select mode) — source not redistributed` |
 | `GPT-5.4` | proprietary | `gpt-5.4 self-scan (last iteration, select mode) — source not redistributed` |
@@ -23,9 +23,9 @@ machine-readable summary; raw scan.md files live at the paths below.
 ## Judge
 
 All scanner outputs are adjudicated by the GPT-5.4 judge:
-- Judge script: the judge script (not redistributed)
-- Per-scanner judge CSV: see `../../table3_cross_scanner_matrix/derived/` and
-  `../../table6_finetune_base_models/derived/`
+- Judge script: `artifact/code/skillmutator/analysis/skillmutator_utils/judge.py` (shipped)
+- Per-scanner aggregates: see `../../../claim02_cross_scanner_detection/data/derived/` and
+  `../../../claim11_finetune_base_models/data/derived/`
 
 ## Aggregation chain
 
@@ -37,12 +37,12 @@ All scanner outputs are adjudicated by the GPT-5.4 judge:
 ## Cross-source consistency
 
 The 8 detection rates in `scanners.csv` cross-match:
-- Rule-based + proprietary rows: `../../table3_cross_scanner_matrix/derived/table3_aggregate.csv` (GPT-5.4 oracle column)
-- Qwen rows: `../../table6_finetune_base_models/derived/table6_aggregate.csv` (Qwen row, base + prefill cells)
-- Final 88.16% row: also appears in `../../table7_phase_ablation/derived/` final row `+ prefill`
+- Rule-based + proprietary rows: `../../../claim02_cross_scanner_detection/data/derived/table3_aggregate.csv` (GPT-5.4 oracle column)
+- Qwen rows: `../../../claim11_finetune_base_models/data/derived/table6_aggregate.csv` (Qwen row, base + prefill cells)
+- Final 88.16% row: also appears in `../../../claim04_phase_ablation/data/derived/` final row `+ prefill`
 
 ## No standalone raw scan tree in this folder
 
-This folder intentionally **does not duplicate** the per-skill scan.md trees;
-they live in the source folders listed above. The figure is a visualization of
+This folder intentionally **does not duplicate** per-skill scan.md trees (they
+are not redistributed); the cross-check paths above point to the shipped aggregates. The figure is a visualization of
 already-derived aggregate values, not a primary measurement.

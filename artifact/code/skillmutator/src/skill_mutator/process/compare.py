@@ -153,13 +153,30 @@ def parse_skill_security_log(log_path: Optional[Path]) -> dict:
   }
 
 
+# Snyk Agent Scan output that means no scan result (missing or rejected token,
+# scanner not installed, usage limit, server unreachable, crash). Such a log is
+# "unavailable", never "available with 0 findings".
+SNYK_UNAVAILABLE_MARKERS = (
+  "set the SNYK_TOKEN environment variable",
+  "Unauthorized",
+  "No module named",
+  "Daily usage limit",
+  "Could not reach analysis server",
+  "Traceback (most recent call last)",
+)
+
+
+def snyk_log_unavailable(text: str) -> bool:
+  return any(m in text for m in SNYK_UNAVAILABLE_MARKERS)
+
+
 def parse_snyk_log(log_path: Optional[Path]) -> dict:
   empty = {"high_count": 0, "available": False}
   if not log_path or not log_path.exists():
     return empty
 
   text = log_path.read_text(encoding="utf-8", errors="replace")
-  if "set the SNYK_TOKEN environment variable" in text:
+  if snyk_log_unavailable(text):
     return empty
 
   # pattern: skills (N high)
@@ -213,7 +230,7 @@ def parse_snyk_findings(log_path: Optional[Path]) -> list:
     return []
 
   text = log_path.read_text(encoding="utf-8", errors="replace")
-  if "set the SNYK_TOKEN environment variable" in text:
+  if snyk_log_unavailable(text):
     return []
 
   findings = []

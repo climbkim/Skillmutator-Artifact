@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Table IV (tab:cross_matrix) — recompute the 9 scanner x 3 GPT-oracle
+"""Table 4 — recompute the 9 scanner x 3 GPT-oracle
 detection-rate matrix (27 cells) from the bundled aggregate
 (data/derived/table3_aggregate.csv), then hand it to the shared verifier, which
 writes results/derived/table4_cross_matrix.csv and compares each cell against
@@ -13,7 +13,7 @@ import _verify_common as V
 
 DERIVED = Path(__file__).resolve().parents[1] / "derived"      # data/derived (inputs)
 
-# scanner rows, in paper Table IV order
+# scanner rows, in paper Table 4 order
 SCANNERS = ["skill-security-scan", "Snyk Agent Scan", "SkillScan API",
             "LLM-Guard", "PIGuard", "DataSentinel",
             "GPT-4o-mini", "GPT-5.4-mini", "GPT-5.4"]
@@ -38,5 +38,5 @@ for scanner in SCANNERS:
 
 sys.exit(V.verify(__file__, "metrics.json", computed,
                   results_name="table4_cross_matrix.csv",
-                  title="Table IV — recomputed 9x3 matrix vs expected/metrics.json (paper golden)\n",
+                  title="Table 4 — recomputed 9x3 matrix vs expected/metrics.json (paper golden)\n",
                   counts=counts))

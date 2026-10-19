@@ -16,9 +16,10 @@ redistribute** them here.
   original Anthropic license/terms. This is the same 17-skill set the crawler
   copies (`crawler/anthropic.py` `EVAL_17`).
 
-The separate **community training pool** used for fine-tuning (`train-community-50`,
-crawled from public registries such as ClawHub) is **not** listed here and **not**
-shipped — its licenses vary per skill and it is freely substitutable. See
+The separate **community training pool** used for fine-tuning (the 68 community-authored
+skills of §6.1 Experimental Setup, crawled from ClawHub) is **not** shipped, since its
+licenses vary per skill. Its slugs and public URLs are listed in
+`artifact/data/clawhub/train_community_skills.csv`. See
 `artifact/code/skillmutator/docs/SKILLS_SETUP.md` for how to assemble it.
 
 ## Obtaining the originals

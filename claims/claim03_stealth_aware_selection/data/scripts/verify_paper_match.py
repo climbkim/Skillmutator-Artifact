@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Table V (tab:select_vs_noselect) — recompute per-scanner select/no-select
+"""Table 5 — recompute per-scanner select/no-select
 detection rates and their delta (pp), plus the 6-scanner average, from the
 freshly rebuilt table (data/derived/tab_select_vs_noselect.csv, emitted by
 build_table5.py), then hand them to the shared verifier, which writes
@@ -54,5 +54,5 @@ computed["Average (6 scanners)/delta"] = round(avg_nsl - avg_sel, 2)
 
 sys.exit(V.verify(__file__, "metrics.json", computed,
                   results_name="table5_select_vs_noselect.csv",
-                  title="Table V — recomputed vs expected/metrics.json (paper golden)\n",
+                  title="Table 5 — recomputed vs expected/metrics.json (paper golden)\n",
                   counts=counts))

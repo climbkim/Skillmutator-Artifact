@@ -19,14 +19,13 @@ original scattered scanner outputs).
 | `filters.py`          | Per-iter eligibility, last_good_iter helper            |
 | `data_access.py`      | Tree walker (`iter_scenarios`, `load_verdict`, `load_meta`) |
 | `refusal.py`          | High-level: trajectories, summaries, valid_scenarios, rules |
-| `_historical/`        | One-time data-tree builders (build_dataset, rejudge_missing) |
 
 ## Usage
 
 ```python
 import sys; sys.path.insert(0, "path/to/skillmutator/analysis")  # dir that contains skillmutator_utils/
 from skillmutator_utils import (
-    aggregate_scenario_final,        # paper Table IV cells
+    aggregate_scenario_final,        # paper Table 4 cells
     aggregate_per_iter,              # RQ2 trajectory (carry_forward / rule_1 / rule_2)
     refusal_summary,                 # refusal table
     valid_scenarios,                 # canonical denominator set
@@ -34,11 +33,11 @@ from skillmutator_utils import (
     iter_scenarios, load_verdict,    # tree walkers
 )
 
-# Paper Table 1 cell (gpt-5.4 self on gpt-5.4 dataset)
+# Paper Table 4 cell (gpt-5.4 self on gpt-5.4 dataset)
 r = aggregate_scenario_final("gpt-5.4", "select", "llm/gpt-5.4-self")
 # {"n": 76, "detected": 66, "rate_pct": 86.84}
 
-# RQ2 iter trajectory (carry-forward, denom=last_good_from_iter_0)
+# RQ2 iter trajectory (carry-forward, denom=evaluable)
 rows = aggregate_per_iter("gpt-5.4", "select", "llm/gpt-5.4-self",
                           rule="carry_forward")
 # [{"iter": 0, "n": 76, "detected": 70, ...}, ...]
@@ -80,14 +79,15 @@ mutation produced", so the most recent successful iter's verdict persists.
 
 | Criterion                  | Meaning                                                 |
 |----------------------------|---------------------------------------------------------|
-| `last_good_from_iter_0`    | iter_0 classification == normal (default; paper conv.)  |
+| `evaluable`                | a scanned refusal-free mutation at some iter (default;  |
+|                            | paper set, n = 48 / 63 / 76, no-select 219)             |
+| `last_good_from_iter_0`    | iter_0 classification == normal                        |
 | `all_attempted`            | every (skill, cat) seen in the tree                     |
 | `refusal_clean`            | all iters [0..max] are normal                           |
 | `any_normal_iter`          | at least one iter is normal                             |
 
 ## `_historical/`
 
-Holds the one-time data-tree builder (`build_dataset.py`) and the missing-v2
-filler (`rejudge_missing.py`). They depend on the original scattered scanner
-outputs that have since been deleted, so they are not expected to run as-is.
-Kept here for provenance / reproducibility documentation only.
+Not included in this release. The one-time data-tree builder (`build_dataset.py`)
+and missing-v2 filler (`rejudge_missing.py`) depended on the original scattered
+scanner outputs; the data tree they built is what the claims verify.

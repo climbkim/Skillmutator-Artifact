@@ -1,6 +1,6 @@
 {
-  "paper_element": "Figure 5 (fig:prefill_delta_comparison) — detection rate (%) of four base open-weight model families (Qwen2.5-Coder-7B-Instruct, Llama-3.1-8B-Instruct, Mistral-7B-Instruct-v0.3, Gemma-2-9b-it) and their fine-tuned variants under base / no-prefill / Phase-4-prefill, evaluated under the GPT-5.4 judge (gpt) and the Claude-Opus-4.7 judge (cla). Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
-  "source": "Skillmutator.tex Table 6 (tab:rq3_main) / fig:prefill_delta_comparison. Delta metrics = prefill - no-prefill (paper Finding 6 headline values).",
+  "paper_element": "Figure 5 (§6.4 Fine-tuning Effectiveness) — detection rate (%) of four base open-weight model families (Qwen2.5-Coder-7B-Instruct, Llama-3.1-8B-Instruct, Mistral-7B-Instruct-v0.3, Gemma-2-9b-it) and their fine-tuned variants under base / no-prefill / Phase-4-prefill, evaluated under the GPT-5.4 judge (gpt) and the Claude-Opus-4.7 judge (cla). Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
+  "source": "paper (camera-ready), Figure 5, §6.4 Fine-tuning Effectiveness. Delta metrics = prefill - no-prefill (paper Finding 5 headline values).",
   "metrics": {
     "gpt/Qwen/base": 17.1,
     "gpt/Qwen/noprefill": 79.0,

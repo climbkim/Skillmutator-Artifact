@@ -1,17 +1,21 @@
-"""Generate Option A (Grouped Bar) + Option B (Delta Plot) for Table 6 viz.
+"""Plot the Figure 5 values (Option A grouped bar + Option B delta plot).
 
-Output: prefill_delta_figures/
-  - option_a_grouped_bar.png
-  - option_b_delta_plot.png
+Output (claim10_prefill_delta/results/figures/, not tracked by git):
+  - option_a_grouped_bar.{png,pdf}               two panels, legend upper-left
+  - option_a_grouped_bar_legend_right.{png,pdf}  same, legend in each panel
+  - option_b_delta_plot.{png,pdf}                prefill - no-prefill per family
 
-Source data: paper.tex Table tab:prefill_delta_comparison
+The plotted values are the paper Figure 5 values. The paper's own layout (one
+shared legend, "GPT-5.4 Scanner" reference label) is bundled as
+data/prefill_delta_comparison.{png,pdf}.
 """
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
 from pathlib import Path
 
-OUT_DIR = Path(__file__).resolve().parent
+OUT_DIR = Path(__file__).resolve().parents[2] / "results" / "figures"
+OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # ─────────────────────────────────────────────────────────────────────
 # IEEE / USENIX / CCS / S&P paper figure style
@@ -44,7 +48,7 @@ mpl.rcParams.update({
 })
 
 # ─────────────────────────────────────────────────────────────────────
-# Data (from paper.tex Table tab:prefill_delta_comparison)
+# Data (from paper Figure 5)
 # ─────────────────────────────────────────────────────────────────────
 MODELS = ["Qwen2.5-Coder-7B-Instruct", "Llama-3.1-8B-Instruct",
           "Mistral-7B-Instruct-v0.3", "Gemma-2-9b-it"]

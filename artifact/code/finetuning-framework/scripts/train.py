@@ -5,7 +5,8 @@ exists so the documentation can refer to a stable, shorter command.
 
 The output directory, dataset paths, and hyperparameters all come from the
 YAML config (see configs/qwen_default.yaml -> training.output_dir). Edit
-the config to change them.
+the config to change them, or override the paths with --train-file,
+--val-file and --output-dir.
 
 Usage:
     # Pre-flight smoke test (5 steps; verify LoRA wraps and the loss is finite)

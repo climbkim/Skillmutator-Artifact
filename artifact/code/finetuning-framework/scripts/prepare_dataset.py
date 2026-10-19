@@ -13,7 +13,7 @@ reproduce the paper's production teacher.
 
 Usage:
     python scripts/prepare_dataset.py \\
-        --skills-dir experiments/sample \\
+        --skills-dir output_demo/skills_input \\
         --teacher gpt-4o-mini \\
         --iters 0,1,2 \\
         --output-dir ${DATASET_DIR}
@@ -41,6 +41,9 @@ def main() -> int:
                     help="Output dataset directory (writes train/val/test.jsonl).")
     ap.add_argument("--val-fraction", type=float, default=0.15,
                     help="Fraction of samples used for the validation split.")
+    ap.add_argument("--max-items", type=int, default=0,
+                    help="Distill at most N skills (0 = all). run.sh uses a small "
+                         "value for its short training demo.")
     args = ap.parse_args()
 
     # Local imports so --help works without the heavy deps installed.
@@ -57,7 +60,8 @@ def main() -> int:
           f"(teacher={args.teacher}, iters={iters}) ...")
     raw_jsonl = raw_dir / "full.jsonl"
     formatter_v3.build_corpus(skills_dir=skills_dir, teacher_model=args.teacher,
-                              iters=iters, output_path=raw_jsonl, provider=args.provider)
+                              iters=iters, output_path=raw_jsonl, provider=args.provider,
+                              max_items=args.max_items)
 
     print("[2/3] Validating schema ...")
     errors = validator.validate(raw_jsonl)

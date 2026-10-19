@@ -1,8 +1,8 @@
 {
-  "paper_element": "Figure 4 (pinD, IER dynamics) — LLM self-scanner per-iteration detection rate (%) for three GPT oracles across refinement iterations 0-4. Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
-  "source": "ier_dynamics.csv (evaluable-subset denominators: GPT-4o-mini n=46@iter0 / n=48@iter1-4; GPT-5.4-mini n=63; GPT-5.4 n=76)",
+  "paper_element": "Figure 4 (IER dynamics) — LLM self-scanner per-iteration detection rate (%) for three GPT oracles across refinement iterations 0-4. Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
+  "source": "ier_dynamics.csv (evaluable-subset denominators, fixed across iterations: GPT-4o-mini n=48; GPT-5.4-mini n=63; GPT-5.4 n=76)",
   "metrics": {
-    "gpt-4o-mini/iter0": 41.3,
+    "gpt-4o-mini/iter0": 39.6,
     "gpt-4o-mini/iter1": 27.1,
     "gpt-4o-mini/iter2": 33.3,
     "gpt-4o-mini/iter3": 27.1,

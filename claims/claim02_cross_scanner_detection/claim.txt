@@ -1,5 +1,4 @@
-Paper element: Table IV
-Source bundle: table3_cross_scanner_matrix
+Paper element: Table 4
 
 Claim
 -----
@@ -8,5 +7,6 @@ Across the three GPT adversarial-oracle datasets (n=48/63/76), rule-based and co
 How this claim is checked
 -------------------------
 Run ./run.sh. It regenerates the aggregate from the raw data in
-data/ and compares the result against the values cited in the
-paper (expected/PAPER_CITED_VALUES.md).
+data/ and compares the result against the paper-cited values and
+tolerances in expected/metrics.json (human-readable copy:
+expected/PAPER_CITED_VALUES.md).

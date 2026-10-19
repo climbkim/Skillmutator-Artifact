@@ -43,7 +43,7 @@ The fine-tuned model has seen tens of thousands of training tokens that follow t
 ### Caveats
 
 - **vLLM-specific.** Raw OpenAI chat completions ignore `continue_final_message` and treat the assistant content as just another conversation turn. Hosted inference platforms typically need a wrapper.
-- **Chat-template fragility.** Models with strict role validation (e.g. Gemma-2 disallowing `system`) may strip or reject the assistant prefix. In our experiments the prefill produces +9.2 pp on Qwen, −7.9 pp on Llama, −17.1 pp on Mistral, and −2.6 pp on Gemma; see paper Finding 5 (§6.4, fig:prefill_delta_comparison) and Table VI.
+- **Chat-template fragility.** Models with strict role validation (e.g. Gemma-2 disallowing `system`) may strip or reject the assistant prefix. In our experiments the prefill produces +9.2 pp on Qwen, −7.9 pp on Llama, −17.1 pp on Mistral, and −2.6 pp on Gemma; see paper Finding 5 (Figure 5, §6.4 Fine-tuning Effectiveness) and Table 6.
 - **Out-of-distribution prefixes are dangerous.** If you change the wording of the forced prefix between training and inference, the model is conditioned on a context it has never seen. The included default `"## Phase 4: Category Mapping\n\n"` matches the marker emitted by `dataset_builder/formatter_v3.py`. Keep them in sync.
 
 ## Where this lives in the code

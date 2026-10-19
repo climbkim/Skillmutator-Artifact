@@ -6,17 +6,19 @@ adjudicate scanner outputs.
 ```
 analysis/
 ├── judge.py             # single-source-of-truth GPT-5.4 v2 judge prompt
+├── judge_scan_tree.py   # batch: eval_infer_vllm.py reports + SkillMutator data tree -> judge_summary.csv
+├── judge_scan_to_csv.py # one scan -> one judge_summary row (run.sh demo)
 ├── parsers.py           # scan.md / verdict-json parsers (lifted from the mutation package)
 ├── rq3/scripts/
 │   └── build_tab_finetune.py        # cross-family detection table (Finding 5 / Figure 5)
 └── rq4/scripts/
-    └── build_tab_phase_ablation.py  # P1 / P12 / P123 / P1234 ablation (Finding 6 / Table VI)
+    └── build_tab_phase_ablation.py  # P1 / P12 / P123 / P1234 ablation (Finding 6 / Table 6)
 ```
 
 ## How to use the judge
 
 ```python
-from skill_scanner_finetune.analysis.judge import judge_call
+from analysis.judge import judge_call   # run from artifact/code/finetuning-framework
 
 verdict = judge_call(
     skill="my-skill",
@@ -47,9 +49,9 @@ Then aggregate:
 ```bash
 # Cross-family (paper Finding 5 / Figure 5)
 python analysis/rq3/scripts/build_tab_finetune.py \
-       --root <fine-tuning-rq3-eval-root>
+       --root <folder with <Model>_<variant>/judge_summary.csv>
 
-# Phase ablation (paper Finding 6 / Table VI)
+# Phase ablation (paper Finding 6 / Table 6)
 python analysis/rq4/scripts/build_tab_phase_ablation.py \
        --root <phase-ablation-eval-root>
 ```

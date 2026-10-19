@@ -19,7 +19,7 @@
                                           | - snyk-agent (SCA)          |
                                           | - llm-scanner x 3 LLMs      |
                                           +--------+--------------------+
-                                                   |  (verdicts.json per cell)
+                                                   |  (verdict.json per scanner cell)
                                                    v
                                           +--------+--------+
                                           | classify        |  normal /

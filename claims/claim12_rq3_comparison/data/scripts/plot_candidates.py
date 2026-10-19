@@ -1,4 +1,4 @@
-"""Render 4 candidate visualizations for paper.tex Table VI (rq3_finding1).
+"""Render 4 candidate visualizations for paper Figure 6.
 
 Outputs: candidate_{1..4}.{pdf,png}
 

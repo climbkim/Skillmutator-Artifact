@@ -205,7 +205,7 @@ def example_skill_mutation(skill_name: str = "pdf", use_select_attacks: bool = T
     MAX_ITERATIONS = max_iterations
 
     # skill_name may be a bare name under {repo}/skills/, OR a full path to a
-    # skill folder (e.g. examples/skills/sample_skill). Resolve both; use the
+    # skill folder (e.g. examples/skills/weather-cache). Resolve both; use the
     # basename as the result-tree key so output never lands INSIDE the skill
     # directory (which would make the copytree below recurse infinitely).
     _skill_arg = Path(skill_name)

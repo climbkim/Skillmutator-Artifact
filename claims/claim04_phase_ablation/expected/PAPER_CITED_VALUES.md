@@ -1,8 +1,8 @@
-# Paper-cited Values — Table VI (`tab:finetune_rq2`)
+# Paper-cited Values — Table 6 (§6.4 Fine-tuning Effectiveness)
 
-From Table VI (`tab:finetune_rq2`); four-phase consistent chain.
+From Table 6 (§6.4 Fine-tuning Effectiveness); four-phase consistent chain.
 
-## Paper Table VI (verified match)
+## Paper Table 6 (verified match)
 
 ```latex
 \begin{tabular}{lrr}
@@ -33,7 +33,7 @@ Phase 1 (Purpose Grounding)                                  &  1.32\% & ---    
 ## Decomposition
 
 - **Phase schema effect** (P3 → P4): +9.22pp (= 67.11 − 57.89)
-- **Refine effect** (P4 → +refine): +11.84pp (= 78.95 − 67.11). Paper Table VI
+- **Refine effect** (P4 → +refine): +11.84pp (= 78.95 − 67.11). Paper Table 6
   prints detection rates to 1 decimal (67.1%, 79.0%), so the **displayed** refine
   delta is **+11.9pp** (79.0 − 67.1) — this is the value cited in claim.txt; the
   2-decimal computation here gives +11.84 → +11.8pp (same figure, finer rounding).

@@ -17,7 +17,14 @@ import sys
 from pathlib import Path
 
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, LogitsProcessor, LogitsProcessorList
+
+
+# Paper scan settings (same as scanner_finetune.py / eval_infer_vllm.py):
+# greedy decoding, frequency_penalty 0.3 on generated tokens, and the Phase 4
+# heading prefilled as the start of the assistant turn.
+PHASE4_PREFIX = "## Phase 4: Category Mapping\n\n\n"
+FREQUENCY_PENALTY = 0.3
 
 
 SYSTEM_PROMPT = (
@@ -72,6 +79,24 @@ def load_model_and_tokenizer(base: str | None, lora: str | None, model: str | No
     return m, tokenizer
 
 
+class FrequencyPenalty(LogitsProcessor):
+    """OpenAI/vLLM-style frequency penalty: subtract penalty x (count of the token
+    in the generated continuation) from its logit. Prompt tokens (including the
+    prefill) are not counted, as in vLLM."""
+
+    def __init__(self, penalty: float, prompt_len: int):
+        self.penalty = penalty
+        self.prompt_len = prompt_len
+
+    def __call__(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
+        generated = input_ids[:, self.prompt_len:]
+        if self.penalty == 0 or generated.shape[1] == 0:
+            return scores
+        counts = torch.zeros_like(scores)
+        counts.scatter_add_(1, generated, torch.ones_like(generated, dtype=scores.dtype))
+        return scores - self.penalty * counts
+
+
 def run_inference(model, tokenizer, skill_content: str, cfg: dict) -> str:
     user_content = f"Analyze this agent skill for security vulnerabilities:\n\n{skill_content}"
     messages = [
@@ -85,19 +110,23 @@ def run_inference(model, tokenizer, skill_content: str, cfg: dict) -> str:
         # system prompt into the user turn so the same code path works everywhere.
         merged = [{"role": "user", "content": SYSTEM_PROMPT + "\n\n" + user_content}]
         text = tokenizer.apply_chat_template(merged, tokenize=False, add_generation_prompt=True)
+    prefill = cfg.get("prefill", PHASE4_PREFIX) or ""
+    text += prefill
     inputs = tokenizer(text, return_tensors="pt").to(model.device)
+    prompt_len = inputs["input_ids"].shape[1]
 
     with torch.no_grad():
         outputs = model.generate(
             **inputs,
             max_new_tokens=cfg.get("max_new_tokens", 4096),
-            temperature=cfg.get("temperature", 0.1),
-            do_sample=cfg.get("do_sample", False),
+            do_sample=False,                       # greedy (= temperature 0)
+            logits_processor=LogitsProcessorList(
+                [FrequencyPenalty(cfg.get("frequency_penalty", FREQUENCY_PENALTY), prompt_len)]),
             pad_token_id=tokenizer.eos_token_id,
         )
 
-    generated = outputs[0][inputs["input_ids"].shape[1]:]
-    return tokenizer.decode(generated, skip_special_tokens=True)
+    generated = outputs[0][prompt_len:]
+    return prefill + tokenizer.decode(generated, skip_special_tokens=True)
 
 
 def main():
@@ -108,6 +137,9 @@ def main():
     parser.add_argument("--lora",  help="LoRA adapter path")
     parser.add_argument("--skill", required=True, help="Skill directory to analyze")
     parser.add_argument("--max-new-tokens", type=int, default=4096)
+    parser.add_argument("--no-prefill", action="store_true",
+                        help="Do not prefill the Phase 4 heading.")
+    parser.add_argument("--frequency-penalty", type=float, default=FREQUENCY_PENALTY)
     args = parser.parse_args()
 
     if not args.model and not args.base:
@@ -125,7 +157,11 @@ def main():
     print(f"Analyzing: {skill_dir.name}")
     print(f"{'='*60}\n")
 
-    result = run_inference(model, tokenizer, skill_content, {"max_new_tokens": args.max_new_tokens})
+    result = run_inference(model, tokenizer, skill_content, {
+        "max_new_tokens": args.max_new_tokens,
+        "prefill": None if args.no_prefill else PHASE4_PREFIX,
+        "frequency_penalty": args.frequency_penalty,
+    })
     print(result)
 
 

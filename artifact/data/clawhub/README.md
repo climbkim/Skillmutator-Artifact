@@ -8,7 +8,7 @@ version, and evaluation pool.
 
 ## Files
 
-- `clawhub_skills.csv` — the **evaluation** corpus (in-the-wild + Finding 8), one row per skill.
+- `clawhub_skills.csv` — the **evaluation** corpus (in-the-wild evaluation: Table 7, Finding 7), one row per skill.
 - `train_community_skills.csv` — the **fine-tuning training host pool** (`pools = train_community`),
   same schema, one row per skill: the 68 community-authored ClawHub skills the SkillMutator pipeline
   mutates to build the distillation training corpus (distinct from the evaluation corpus above; see
@@ -38,8 +38,8 @@ version, and evaluation pool.
 |---|---|---|
 | `clean_175` | 175 | stratified 175 clean pool (new round) |
 | `clean_pool` | 200 | ClawHub-LLM benign candidate pool |
-| `finding8_clean25` | 25 | 25 clean samples for Finding 8 |
-| `finding8_susp100` | 100 | 100 suspicious for Finding 8 (4 strata) |
+| `finding8_clean25` | 25 | 25 of the 100 clean samples of Table 7 (Finding 7); pool name is a legacy identifier |
+| `finding8_susp100` | 100 | the 100 suspicious samples of Table 7 (Finding 7), 4 strata; pool name is a legacy identifier |
 
 `train_community_skills.csv` (fine-tuning, separate file):
 

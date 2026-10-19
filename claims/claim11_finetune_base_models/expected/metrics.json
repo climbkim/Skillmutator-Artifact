@@ -1,6 +1,6 @@
 {
-  "paper_element": "Table 6 / Figure 5 (Finding 5, fig:prefill_delta_comparison) — per-family base-vs-fine-tuned detection rate (%) on the 76-case SkillMutator benchmark under the GPT-5.4 judge. Columns: base / fine-tuned no-prefill / fine-tuned prefill. Families: Qwen2.5-Coder-7B-Instruct, Llama-3.1-8B-Instruct, Mistral-7B-Instruct-v0.3, Gemma-2-9b-it. Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
-  "source": "Skillmutator.tex Finding 5. Base rates use the canonical n=76 denominator (missing scan attempts imputed as 'not detected').",
+  "paper_element": "Figure 5 (Finding 5) — per-family base-vs-fine-tuned detection rate (%) on the 76-case SkillMutator benchmark under the GPT-5.4 judge. Columns: base / fine-tuned no-prefill / fine-tuned prefill. Families: Qwen2.5-Coder-7B-Instruct, Llama-3.1-8B-Instruct, Mistral-7B-Instruct-v0.3, Gemma-2-9b-it. Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
+  "source": "paper (camera-ready), Finding 5. Base rates use the canonical n=76 denominator (missing scan attempts imputed as 'not detected').",
   "canonical_base_denominator": 76,
   "metrics": {
     "Qwen/base": 17.1,

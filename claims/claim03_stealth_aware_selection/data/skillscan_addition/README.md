@@ -1,15 +1,15 @@
-# SkillScan API row for Table V (`tab:select_vs_noselect`)
+# SkillScan API row for Table 5 (§6.3.1 Stealth-aware Attack Selection)
 
-Data + automation runner + paired-delta computation for adding the **SkillScan (ClawHub commercial)** row
-to paper.tex Table V (select vs no-select) (paper-canonical Option A).
+Per-scenario SkillScan decisions and the paired-delta count behind the **SkillScan** row
+of Table 5 (select vs no-select).
 
-## paper.tex mapping
+## Paper mapping
 
 | column | n | SkillScan value | source |
 |---|---|---|---|
-| select | 76 | **1.32%** (1/76) | paper canonical (Table III); table3 bundle reference |
-| no-select | 221 | **5.43%** (12/221) | `derived/no_select_perscenario.csv` paired-delta |
-| Drop pp | — | +4.11pp | (no-select − select), same direction as other scanners |
+| select | 76 | **1.32%** (1/76) | paper Table 4 (GPT-5.4 column) and Table 5 (select column) |
+| no-select | 219 | **5.48%** (12/219) | `derived/no_select_perscenario.csv` paired-delta |
+| Drop pp | — | +4.16pp | (no-select − select), same direction as other scanners |
 
 ## Paper criterion
 
@@ -24,72 +24,38 @@ the mutated CRITICAL of these skills is not detected under the paired-delta crit
 ```
 skillscan_addition/
 ├── README.md
-├── PAPER_CITED_VALUES.md         # paper.tex values → source mapping
-├── raw/
-│   ├── select/                   # table3 carry-over (76 reports)
-│   ├── no-select/                # NEW scan (221 reports)
-│   └── baselines_2026-05-27/     # 17 NEW baselines (for reference)
+├── PAPER_CITED_VALUES.md         # paper values → source mapping
 ├── derived/
 │   ├── select_perscenario.csv          # 76 rows (table3 source)
 │   ├── no_select_perscenario.csv       # 221 rows, paired-delta marked
 │   ├── no_select_perskill_summary.csv  # 17-skill aggregation
 │   └── old_baselines_per_skill.csv     # paper-canonical 17 baselines
-├── manifests/
-│   ├── no_select.csv             # 221 rows (batch input)
-│   └── baselines_17.csv          # 17 baselines (rescan input)
-└── scripts/
-    └── build_manifest.py         # manifest generator
+└── manifests/
+    ├── no_select.csv             # 221 rows (batch input)
+    └── baselines_17.csv          # 17 baselines (rescan input)
 ```
+
+The SkillScan API was called once per manifest row (76 select reports, 221
+no-select reports and 17 unmodified baselines). The raw API responses are not
+redistributed; `derived/` holds the per-scenario decisions that `build_table5.py`
+reads.
 
 ## Reproduction commands
 
-### 1. Baseline rescan (to check the baseline at the paper's measurement time, reference)
-```bash
-python "<skillscan runner — not redistributed>" \
-  --manifest manifests/baselines_17.csv \
-  --output-root raw/baselines_2026-05-27
-```
+The SkillScan API calls (17 baselines, 76 select and 221 no-select reports) need
+the SkillScan service and the withheld mutated skills, so they are not part of the
+bundle. The paper's paired-delta decision (detected when the mutated verdict is
+MEDIUM or above and the unmodified skill's verdict is not) is stored per scenario
+in `derived/no_select_perscenario.csv`; Table 5 counts it on the 219 evaluable scenarios:
 
-### 2. No-select 221 scenario scan
 ```bash
-# Generate manifest
-python scripts/build_manifest.py \
-  --src "<source scan tree — not redistributed>" \
-  --csv manifests/no_select.csv
-
-# Actual API run (8 parallel workers recommended)
-for i in 0 1 2 3 4 5 6 7; do
-  python "<skillscan runner — not redistributed>" \
-    --manifest manifests/no_select.csv \
-    --output-root raw/no-select \
-    --start $((i*28)) --limit 28 &
-done; wait
-```
-
-### 3. Paired-delta computation (Option A, paper canonical)
-```bash
-# (inline in this folder; or can be added to scripts/)
 python -c "
-import csv, json
-from pathlib import Path
-GE_MED = {'MEDIUM','HIGH','CRITICAL'}
-# OLD baselines per-skill
-rows = list(csv.DictReader(open('derived/select_perscenario.csv', encoding='utf-8')))
-old_baseline = {r['skill']: r['ss_risk_baseline'] for r in rows}
-# No-select per-scenario
-det = 0; n = 0
-for f in Path('raw/no-select').rglob('result.json'):
-    sk = f.parent.parts[-3]
-    r = json.loads(f.read_text(encoding='utf-8'))
-    mut = r.get('verdict','?')
-    base = old_baseline.get(sk, 'SAFE')
-    n += 1
-    if mut in GE_MED and base not in GE_MED:
-        det += 1
-print(f'no-select paired delta: {det}/{n} = {100*det/n:.2f}%')
+import csv
+valid = {(r['skill'], r['cat_folder']) for r in csv.DictReader(open('../judge/select_vs_noselect_verdicts.csv', encoding='utf-8'))
+         if r['mode'] == 'no-select' and r['valid'] == '1'}
+rows = [r for r in csv.DictReader(open('derived/no_select_perscenario.csv', encoding='utf-8')) if (r['skill'], r['cat']) in valid]
+det = sum(r['detected_paired_delta'] == 'True' for r in rows)
+print(f'no-select paired delta: {det}/{len(rows)} = {100*det/len(rows):.2f}%')
 "
+# -> no-select paired delta: 12/219 = 5.48%
 ```
-
-## Paper.tex Table V integration
-
-See `table.tex` — includes the 6-scanner Table V draft.

@@ -1,5 +1,4 @@
-Paper element: Table X
-Source bundle: table8_baseline_aggregate
+Paper element: Table 10
 
 Claim
 -----
@@ -8,5 +7,6 @@ On the 17 unmodified Anthropic skills, all LLM scanners report findings on 17/17
 How this claim is checked
 -------------------------
 Run ./run.sh. It regenerates the aggregate from the raw data in
-data/ and compares the result against the values cited in the
-paper (expected/PAPER_CITED_VALUES.md).
+data/ and compares the result against the paper-cited values and
+tolerances in expected/metrics.json (human-readable copy:
+expected/PAPER_CITED_VALUES.md).

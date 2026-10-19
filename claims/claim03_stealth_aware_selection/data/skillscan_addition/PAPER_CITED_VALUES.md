@@ -1,37 +1,24 @@
-# PAPER_CITED_VALUES — Table V SkillScan row (Option A)
+# PAPER_CITED_VALUES — Table 5 SkillScan row (paired-delta criterion; baselines from the original per-skill scan)
 
-Updates the SkillScan row + Average row of paper.tex Table V (`tab:select_vs_noselect`).
+Source of the SkillScan row and the Average row of paper Table 5 (§6.3.1 Stealth-aware Attack Selection).
 
 ## Value → source mapping
 
 | paper value | value | source file |
 |---|---|---|
-| SkillScan select detection rate | **1.32%** (1/76) | paper canonical Table III; `derived/select_perscenario.csv` |
-| SkillScan no-select detection rate | **5.43%** (12/221) | `derived/no_select_perscenario.csv` `detected_paired_delta=True` rows |
+| SkillScan select detection rate | **1.32%** (1/76) | paper Table 4 (GPT-5.4 column) and Table 5 (select column); `derived/select_perscenario.csv` |
+| SkillScan no-select detection rate | **5.48%** (12/219) | `derived/no_select_perscenario.csv` `detected_paired_delta=True` rows |
 | Detection criterion | mutated≥MED ∧ baseline<MED | `derived/no_select_perscenario.csv` column `detected_paired_delta` |
 | Baseline reference | OLD per-skill | `derived/old_baselines_per_skill.csv` |
 
-## 6-scanner average update (paper body impact)
+## Where the paper cites these values
 
-| average | 5 scanners (existing) | 6 scanners (SkillScan added) |
-|---|---|---|
-| select | 41.31% | **34.65%** |
-| no-select | 49.02% | **41.76%** |
-| drop | 7.71pp | **7.10pp** |
-
-### Lines to update in the paper body (ablation §)
-
-```diff
-- The 7.71\,pp average drop across scanners
-+ The 7.10\,pp average drop across the six scanners
-
-- 49.02\% on \texttt{no-select} versus 41.31\% on \texttt{select}
-+ 41.76\% on \texttt{no-select} versus 34.65\% on \texttt{select}
-```
-
-### SkillScan drop body addition option (optional)
-> "Rule-based and commercial scanners show the same direction at lower magnitude
-> (\texttt{skill-security-scan} +4.20pp, Snyk Agent Scan +7.53pp, **SkillScan +4.11pp**)."
+| paper value (Table 5, §6.3.1 Stealth-aware Attack Selection) | bundled value |
+|---|---|
+| SkillScan select / no-select: 1.3% / 5.5% | 1.32% / 5.48% |
+| Average (6 scanners) select / no-select: 34.7% / 41.6% | 34.65% / 41.63% |
+| "the 7.0 pp average drop across the six scanners" | 6.98 pp |
+| "detection dropping by 4.4 pp for skill-security-scan, 7.7 pp for Snyk Agent Scan, and 4.2 pp for SkillScan" | 4.43 / 7.68 / 4.16 pp |
 
 ## Detected 12 cases (no-select paired delta = True)
 
@@ -59,11 +46,11 @@ rows = list(csv.DictReader(open('derived/no_select_perscenario.csv', encoding='u
 det = sum(1 for r in rows if r['detected_paired_delta'].lower() == 'true')
 print(f'no-select paired delta: {det}/{len(rows)} = {100*det/len(rows):.2f}%')
 "
-# Expected: 12/221 = 5.43%
+# Expected on all 221 API reports: 12/221 = 5.43%; Table 5 counts the 219 evaluable scenarios (12/219 = 5.48%)
 ```
 
-## n=215 vs n=221 caveat
+## Denominator
 
-paper Table V uses n=215 notation (the refusal-excluded count of the Snyk paired-mutation pipeline).
-This folder's SkillScan no-select is n=221 (all last-iteration entries found in the source scan tree (not redistributed)).
-The difference of 6 is presumed to be refusal exclusion. Handle separately if normalization to n=215 is needed when entering into paper Table V.
+Table 5 counts SkillScan on the same 219 evaluable no-select scenarios as the other scanners
+(`scripts/build_table5.py` keeps the rows of `derived/no_select_perscenario.csv` whose scenario is valid in
+`judge/select_vs_noselect_verdicts.csv`). The 2 other API reports are not detected, so the count stays 12.

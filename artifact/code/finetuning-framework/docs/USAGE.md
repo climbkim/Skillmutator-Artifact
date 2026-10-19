@@ -9,7 +9,7 @@ Merge the adapter once, then serve it with vLLM:
 ```bash
 python -m skill_scanner_finetune.finetune.merge_lora \
        --base    Qwen/Qwen2.5-Coder-7B-Instruct \
-       --adapter ${OUTPUT_DIR}/qwen2.5-coder-7b-d3/final \
+       --lora    ${OUTPUT_DIR}/qwen2.5-coder-7b-d3/final \
        --out     ${OUTPUT_DIR}/qwen2.5-coder-7b-d3-merged
 
 vllm serve ${OUTPUT_DIR}/qwen2.5-coder-7b-d3-merged \
@@ -35,7 +35,7 @@ The output is a Markdown report with the four phases. The final phase (`## Phase
 If you happen to know which attack category was injected (e.g. you mutated the skill yourself with the sister `skill-mutator` package), you can score the scanner's output deterministically:
 
 ```python
-from skill_scanner_finetune.analysis.judge import judge_call
+from analysis.judge import judge_call   # run from artifact/code/finetuning-framework
 
 verdict = judge_call(
     skill="my-skill",
@@ -61,7 +61,7 @@ python scripts/run_scanner.py path/to/your-skill \
        --model my-finetuned-scanner
 ```
 
-Prefill is model-dependent (paper §6.4 Finding 5, `fig:prefill_delta_comparison`). Only Qwen benefits from forced Phase-4 prefill (+9.2 pp under the GPT-5.4 judge); Llama, Mistral, and Gemma score *higher* without it — dropping prefill changes detection by roughly +7.9 / +17.1 / +2.6 pp for Llama / Mistral / Gemma, due to chat-template incompatibilities. Pick the variant that matches your base model.
+Prefill is model-dependent (paper Figure 5, §6.4 Fine-tuning Effectiveness, Finding 5). Only Qwen benefits from forced Phase-4 prefill (+9.2 pp under the GPT-5.4 judge); Llama, Mistral, and Gemma score *higher* without it — dropping prefill changes detection by roughly +7.9 / +17.1 / +2.6 pp for Llama / Mistral / Gemma, due to chat-template incompatibilities. Pick the variant that matches your base model.
 
 ## Environment variables
 

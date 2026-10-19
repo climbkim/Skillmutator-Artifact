@@ -4,8 +4,10 @@ SkillMutator artifact — commands & options
 WHAT reproduces WHAT (claim -> table/figure), expected values, and requirements
 are in README.txt / README.md. This file is the command + option reference.
 
-Adversarial (mutated) skills ship ONLY as scanner inputs for an isolated
-environment; do not install or execute them against a live agent (see ETHICS.md).
+Adversarial (mutated) skills are NOT bundled, to prevent misuse; they are
+generated on disk only when the live pipeline (Tier 2-4) is run. Use them only
+as scanner inputs in an isolated environment; do not install or execute them
+against a live agent (see ETHICS.md).
 No personal data is included. API keys are read from a local .env and are never
 bundled.
 
@@ -19,21 +21,23 @@ bundled.
   ./install.sh --finetune      # + GPU training/inference (torch, transformers, peft, vllm, ...)
   ./install.sh --all           # generate + finetune
   PYTHON=<interp> ./install.sh  # choose the base Python (default python3)
+  # --finetune / --all need Python 3.10-3.12 (vllm 0.8.5, sentencepiece 0.2.0 have
+  # no 3.13+ builds), e.g.  PYTHON=python3.12 ./install.sh --all
 
 
 Quick start (one command per tier)
 ----------------------------------
-  # Tier 1  verify all tables/figures        CPU · no key · free · ~minutes   << START HERE
+  # Tier 1  verify the 12 table/figure claims    CPU · no key · free · ~minutes   << START HERE
   ./install.sh && ./run.sh --tier 1
 
   # Tier 2  live demo on the sample skill     needs OPENAI_API_KEY (in .env)
   ./install.sh --generate && ./run.sh --tier 2 --no-gpu --env-file .env     # no GPU
   ./install.sh --all      && ./run.sh --tier 2 --env-file .env              # with a GPU (adds FT scan)
 
-  # Tier 3  paper-scale, released adapter      key + (A100 GPU unless --no-gpu) + network
+  # Tier 3  paper skills, default settings     key + (GPU unless --no-gpu) + network
   ./install.sh --all && ./run.sh --tier 3 --env-file .env                   # add --no-gpu to skip FT
 
-  # Tier 4  full reproduction incl. training   key + A100 80GB + network
+  # Tier 4  full benchmark + training demo     key + A100 80GB + network
   ./install.sh --all && ./run.sh --tier 4 --env-file .env
 
   Put OPENAI_API_KEY in a .env beside run.sh (or pass --env-file PATH). Add
@@ -47,8 +51,8 @@ Quick start (one command per tier)
 
     --tier 1   data verification    CPU, no key/GPU        ~minutes        $0
     --tier 2   sample skill, no train  API key (+GPU for finetune side)    few min
-    --tier 3   paper skills, no train  API key + A100-class GPU + network  hours
-    --tier 4   full incl. training     A100 80GB + API key + network       ~1.5 days
+    --tier 3   paper skills, no train  API key + GPU ~16GB + network       hours
+    --tier 4   full benchmark + train demo  A100 80GB + API key + network  ~3 h+ + ~1-2 h
 
   --no-gpu     run ONLY the parts that need no GPU (CPU claims + the skillmutator
                CPU+API pipeline); skip the GPU finetune steps. The skillmutator
@@ -58,99 +62,124 @@ Quick start (one command per tier)
 
   Cost (est., grounded in claim06 + REPRODUCE.md; gpt-4o-mini default vs GPT-5.4 paper):
     Tier 2  : a few US cents  /  < $1        (+ ~$0.5 GPU on the finetune side)
-    Tier 3  : ~$2-3 / ~$15-25 API  + ~1-2 A100-h (~$1-2)   (single oracle, n~76)
-    Tier 4  : ~1.5 DAYS total (setup -> gen -> train 4 models -> infer), budgeted
-              generously. Per stage (GPU at $1.10/h):
-              0 setup     CPU+net  ~1.5 h  bandwidth
-              1 skillmut  CPU+API  ~3   h  ~$30 API est. (mutate 17 skills x3 oracles + scan)
-              2 data-gen  API      ~5-10h  ~$40-60 GPT-5.4 teacher (RECORDED); ~$4 gpt-4o-mini
-                                           (teacher 4-phase distill -> 1219-ex corpus, ~4,900 calls)
-              3 training  A100     ~25  h  ~25 A100-h ~$28 (MEASURED: Qwen 4.5/Llama 5.0/Gemma 10.0/Mistral ~5.5)
-              4 inference A100     ~3   h  ~3-4 A100-h ~$3-4  (per model)
-              5 judge+bld API+CPU  ~1   h  ~$1-3
-              TOTAL       A100     ~1.5day(~40h)  ~$75 (gpt-4o-mini teacher) - ~$130 (GPT-5.4), incl. ~28 A100-h (~$31)
-  A100 rate = paper's $1.10/h (claim06). Fig 5 compares 4 base families, each
-  trained from scratch (loop BASE_MODEL over the 4) -> multi-model training is what
-  makes Tier 4 ~1.5 days; a single Qwen scanner alone is 4.5 h (MEASURED
-  train_runtime 16,275 s). Stage 2 (teacher distillation) is the heavy API step,
-  RECORDED at ~$40-60 with GPT-5.4 (5 sequential calls/example over ~988 cases;
-  ~2.8 h measured for a 307-ex 4-way batch -> ~5-10 h for the full corpus; run.sh
-  demo default gpt-4o-mini ~$4). Stage-1 eval generation is estimated (per-scan
-  scanning ~$3 total). Also redoing every Table VI phase + a/epoch ablation is the
-  full ~72 A100-h (~3-day, ~$80) campaign. Live output is nondeterministic.
+    Tier 3  : ~$2-3 API (gpt-4o-mini default) + ~$0.5 GPU; one oracle at the paper
+              settings (section 4) is ~$15-25+ API with gpt-5.4 (est., not measured)
+    Tier 4  : estimates (GPU at $1.10/h):
+              1 skillmut  CPU+API  ~3 h+   ~$30+ API, expected ~$200 (17 skills x3 oracles, iter_0-4,
+                                           gpt-5.4 judge, cross scans, + no-select pass;
+                                           this setting is not measured and costs more)
+              2 FT demo   A100+API ~1-2 h  ~$1-2 GPU + < $1 API (base Qwen 7B download,
+                                           teacher distill of <= 24 skills, 5-step LoRA
+                                           run, released-adapter scan of 2 skills)
+  A100 rate = paper's $1.10/h (claim06). The training demo shows the process; it
+  does not rebuild the paper's adapters. Paper-scale training is NOT automated:
+  full corpus distillation (1219 examples, ~4,900 calls, RECORDED ~$40-60 with the
+  GPT-5.4 teacher), 4 base families from scratch (MEASURED ~25 A100-h; a single
+  Qwen scanner is 4.5 h, train_runtime 16,275 s), vLLM batch scan (~3-4 A100-h);
+  every Table 6 phase + a/epoch ablation is the full ~72 A100-h (~3-day, ~$80)
+  campaign. These results are verified at Tier 1 (claims 04, 10, 11, 12; cost in
+  claim06). Live output is nondeterministic.
 
 
 2. Tier 1 — data verification (CPU, no key, no GPU)
 ---------------------------------------------------
-  ./run.sh --tier 1                        # all 13 table/figure/data claims (CPU)
+  ./run.sh --tier 1                        # all 12 table/figure claims (CPU)
   # or a single claim directly:
   cd claims/claim04_phase_ablation && ./run.sh    # rebuild + verify (PASS/FAIL)
 Each claims/claimNN/run.sh regenerates its aggregate from bundled verdicts and
-checks expected/PAPER_CITED_VALUES.md. (Claim list + expected values: README.)
+checks it against the paper-cited values and tolerances in
+expected/metrics.json (human-readable copy: expected/PAPER_CITED_VALUES.md).
+(Claim list + expected values: README.)
 
 
 3. Tier 2 — sample skill, no training
 -------------------------------------
-Mutation side (regenerates Table III/IV/V + Figure 4 at demo scale):
+Mutation side (regenerates Tables 3/4/5 + Figure 4 at demo scale):
   cd artifact/code/skillmutator
   ./run.sh                                 # default: sample skill, gpt-4o-mini
   Options:
     --model MODEL          oracle + LLM-scanner model         (default gpt-4o-mini)
-    --judge-model MODEL    judge model                        (paper uses gpt-5.4)
+    --judge-model MODEL    evaluation judge for the LLM-scanner rows (Figure 7
+                           prompt; paper uses gpt-5.4; default gpt-4o-mini).
+                           run.sh first checks that the key can use this model.
+                           A failed judge call leaves no verdict and stops the
+                           run before the tables are built.
+    --iters N              N iterations iter_0..iter_{N-1}    (default 2; paper: 5 select, 3 no-select)
+    --mode MODE            select | no-select                 (default select)
+    --cross-scan           also scan each scenario's final iteration with the
+                           other two LLM scanners (Table 4 cross cells)
+    --keep-data            keep other oracles/modes in the data tree (Tier 4 loop)
     --skill PATH           mutate a specific skill folder      (has SKILL.md)
     --crawl N              fetch N skills first, then mutate the pool
     --registry NAME        crawl source: anthropic | clawhub   (default clawhub)
-    --skills-dir DIR       where crawled skills land            (default ./skills)
+    --skills-dir DIR       where crawled skills land            (default ./skills/<registry>)
     --env-file PATH        load OPENAI_API_KEY (+ SNYK_TOKEN/LLM_*) from a .env
   Outputs -> analysis/paper_floats/outputs/<float>/
 
 Fine-tuning side (released adapter, no training):
   cd artifact/code/finetuning-framework
-  MODE=demo SKIP_TRAIN=1 ./run.sh          # data-gen + fetch adapter + scan sample + tables
+  SKIP_TRAIN=1 ./run.sh                    # fetch adapter + scan the mutation made above
+                                           #   and the benign sample + tables
 
 
-4. Tier 3 — download paper skills, reproduce (released adapter, no training)
-----------------------------------------------------------------------------
-Mutation side (17 Anthropic eval skills, auto-cloned):
+4. Tier 3 — paper skills, default settings (released adapter, no training)
+--------------------------------------------------------------------------
+Mutation side (17 Anthropic eval skills, auto-cloned; one oracle at the default
+settings: gpt-4o-mini oracle and judge, 2 iterations, no cross LLM scans):
   cd artifact/code/skillmutator
-  ./run.sh --crawl 17 --registry anthropic --skills-dir ./skills --env-file <.env>
+  ./run.sh --crawl 17 --registry anthropic --skills-dir ./skills/anthropic --env-file <.env>
   # community/wild corpus instead: --registry clawhub  (reads
   #   artifact/data/clawhub/clawhub_skills.csv; only SKILL.md is re-fetchable)
-Fine-tuning side (full corpus, released adapter):
+  # paper settings for one oracle (as in Tier 4; e.g. the n=76 gpt-5.4 set):
+  ./run.sh --model gpt-5.4 --judge-model gpt-5.4 --iters 5 --cross-scan \
+           --crawl 17 --registry anthropic --skills-dir ./skills/anthropic --env-file <.env>
+  #   Table 5 also needs the no-select pass, and the other oracles' columns
+  #   need their own runs (see Tier 4).
+Fine-tuning side (released adapter, one mutated + one benign skill, as in Tier 2):
   cd artifact/code/finetuning-framework
-  MODE=full SKIP_TRAIN=1 ./run.sh
+  SKIP_TRAIN=1 ./run.sh
 
 
-5. Tier 4 — full reproduction incl. training
----------------------------------------------
-Mutation side (all three oracles, judge gpt-5.4):
+5. Tier 4 — full benchmark + fine-tuning training demo
+-------------------------------------------------------
+Mutation side (all three oracles, judge gpt-5.4; one accumulated data tree):
   cd artifact/code/skillmutator
+  rm -rf demo-data
   for m in gpt-4o-mini gpt-5.4-mini gpt-5.4; do
-    ./run.sh --model "$m" --judge-model gpt-5.4 --crawl 17 --registry anthropic \
-             --skills-dir ./skills --env-file <.env>
+    ./run.sh --model "$m" --judge-model gpt-5.4 --iters 5 --cross-scan --keep-data \
+             --crawl 17 --registry anthropic --skills-dir ./skills/anthropic --env-file <.env>
   done
-Fine-tuning side (LoRA train from scratch, then scan):
+  ./run.sh --model gpt-5.4 --judge-model gpt-5.4 --iters 3 --mode no-select --cross-scan --keep-data \
+           --crawl 17 --registry anthropic --skills-dir ./skills/anthropic --env-file <.env>   # Table 5
+Fine-tuning side (training demo, then a released-adapter scan):
   cd artifact/code/finetuning-framework
-  MODE=full ./run.sh                       # one base model (~4.5-8h A100)
-  # Figure 5 compares 4 base families -- loop BASE_MODEL to reproduce all (~25 A100-h):
-  for b in Qwen/Qwen2.5-Coder-7B-Instruct meta-llama/... mistralai/... google/gemma-...; do
-    MODE=full BASE_MODEL="$b" ./run.sh
-  done
-  Env knobs (defaults): MODE=demo|full  SKIP_TRAIN=0|1  SKIP_SCAN=0|1
+  ./run.sh                                 # [A] distill <= 24 skills, [B] 5-step LoRA run,
+                                           # [C]-[F] released-adapter scan + judge + tables
+  Paper-scale training is not automated (see Tier 4 notes above and
+  docs/REPRODUCE.md); only the Qwen training config is shipped.
+  Env knobs (defaults): SKIP_TRAIN=0|1  SKIP_SCAN=0|1  MAX_STEPS=5  DATAGEN_MAX=24
     TEACHER=gpt-4o-mini (demo; the released adapter was distilled with GPT-5.4)
     JUDGE_MODEL=gpt-4o-mini  BASE_MODEL=Qwen/Qwen2.5-Coder-7B-Instruct
-    ADAPTER_REPO=climbkim/skillmutator-scanner-adapters  MAX_STEPS=5  OUTPUT_DIR=./output_demo
+    ADAPTER_REPO=climbkim/skillmutator-scanner-adapters  OUTPUT_DIR=./output_demo
+    DATASET_DIR=$OUTPUT_DIR/dataset
 
 
 6. Environment variables
 ------------------------
   OPENAI_API_KEY   REQUIRED for Tiers 2-4 (oracle + LLM scanner + judge/teacher).
-  SNYK_TOKEN       OPTIONAL — enables the Snyk scanner; without it the Snyk column
-                   is left unavailable and the run still proceeds.
+  SNYK_TOKEN       OPTIONAL — enables the Snyk scanner; without a valid token the
+                   Snyk cells are shown as n/a and the run still proceeds. A
+                   .env.example placeholder counts as no token.
+                   (In the live tables, n/a means no verdict for that cell: not run
+                   in this run, e.g. no --cross-scan or no no-select pass, or the
+                   scanner was unavailable.)
   HF_TOKEN         HuggingFace access for base models / adapters (finetune side).
   LLM_PROVIDER / LLM_MODEL     optional LLM-scanner defaults.
-  SKILLMUTATOR_DATA_ROOT       canonical data tree root (default ./demo-data).
-  SKILLMUTATOR_ORACLE          oracle key for Table V (set by run.sh to --model).
+  SKILLMUTATOR_DATA_ROOT       canonical data tree root (default ./demo-data). run.sh cleans it
+                               only if it is ./demo-data or a folder run.sh created; it refuses
+                               to clean any other non-empty folder. The top-level ./run.sh
+                               --tier 2-4 always uses artifact/code/skillmutator/demo-data.
+  SKILLMUTATOR_ORACLE          oracle key for Table 5 (set by run.sh to --model).
   SKILLMUTATOR_CLAWHUB_CSV     override the ClawHub manifest path (--registry clawhub).
   SKILLMUTATOR_CLAWHUB_POOL    optional pool filter, e.g. clean_175.
 Copy the top-level .env.example to .env (beside run.sh) and fill in what you

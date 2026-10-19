@@ -1,10 +1,9 @@
-# Table VIII — Per-Scan Operating Cost (Cost Envelope)
+# Table 8 — Per-Scan Operating Cost (Cost Envelope)
 
 ## (1) Paper location
 
-- **LaTeX label**: `\label{tab:cost_envelope}`
-- **Paper location**: §6.4, just before Finding 4
-- **Caption**: "Per-scan operating cost on the GPT-5.4 oracle benchmark ($n{=}76$). Multipliers in parentheses are relative to our fine-tuned scanner. \$/detected = \$/skill $\div$ (recall/100)."
+- **Paper location**: Table 8, §6.5 Further Analyses (Finding 8)
+- **Caption**: "Per-scan operating cost on the GPT-5.4 oracle benchmark ($n{=}76$). The local scanner cost is estimated based on the batch inference using A100 GPU rental at \$1.1/hour. \$/detection (\$/det.) = \$/skill ÷ recall."
 
 ## (2) PAPER_TARGET_VALUES
 
@@ -28,36 +27,28 @@ Summary:
 | GPT-5.4 | self-scanner, API direct, body preserved | tiktoken (`o200k_base`) — mean abs Δ = 519 tokens vs API |
 | Qwen-7B + ours (local) | fine-tuned Qwen2.5-Coder-7B scans (prefill) | vLLM single-stream throughput on A100 80GB |
 
-### Raw files (raw/)
-- `scan_pointers.md` — pointers to the 4 scanner × 76 skill source scans (not redistributed)
-- `rescan_gpt4o_mini_3missing/` — 3 (skill, category, iter) rescans for GPT-4o-mini last-iteration positions that were missing from the source tree
-- `m7_lastgood_gpt54_oracle.csv` — per-scanner per-skill last-iteration token counts (n=76)
-- `m7_lastgood_tiktoken.csv` — tiktoken reconstruction reference
-
-### Derived files (derived/)
-- `m7_final.csv` — final aggregated cost/latency table (per-scanner aggregate)
-- `m7_per_scanner_oracle.csv` — per-scanner oracle-stratified breakdown
+### Shipped files
+- `derived/m7_final.csv` — final aggregated cost/latency table (per-scanner aggregate)
+- `derived/m7_per_scanner_oracle.csv` — per-scanner oracle-stratified breakdown
+- `scripts/verify_paper_match.py` — recomputes Table 8 from `derived/` and checks it against `expected/metrics.json` (called by `run.sh`)
 
 ## (4) Reproduction commands
 
 ```bash
-cd table10_cost_envelope
-python scripts/build_m7_final.py        # raw → m7_final.csv (re-derive)
-python scripts/cross_verify_qwen.py     # cross-verify Qwen latency across 13 measurement sites
+bash ../run.sh        # recompute Table 8 from derived/ and compare to expected/
 ```
 
-Key constants in `build_m7_final.py`:
+Key constants used to build `derived/m7_final.csv`:
 - `A100_USD_PER_HOUR = 1.10` — RunPod/vast.ai (user-chosen)
-- `PRICING` dict — OpenAI 2026-01 pricing for GPT-4o-mini / GPT-5.4-mini / GPT-5.4
+- OpenAI 2026-01 pricing for GPT-4o-mini / GPT-5.4-mini / GPT-5.4
 
 ## (5) Source scans
 
-Cost/latency is derived from the bundled token-count CSVs above; the underlying
-per-scanner source scan trees are not redistributed.
+Cost/latency is derived from per-scanner source scan trees that are not redistributed.
 
 ## (6) Verification
 
-`cross_verify_qwen.py`: Qwen-7B latency agrees across three independent measurement sites (median 13.5s).
+Qwen-7B latency agrees across independent measurement sites (median 13.5 s).
 
 ## (7) Caveats
 

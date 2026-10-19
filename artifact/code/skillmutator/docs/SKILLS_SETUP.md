@@ -1,13 +1,13 @@
 # Setting up the skill collections
 
-This repo ships **no** skills (other than one tiny smoke-test sample at `examples/skills/sample_skill/`). Reproducing the paper requires assembling two disjoint collections yourself:
+This repo ships **no** skills (other than one tiny self-authored sample, `examples/skills/weather-cache/`, MIT). Reproducing the paper requires assembling two disjoint collections yourself:
 
 1. **17 evaluation skills** — Anthropic's officially published Agent Skills (mutation hosts for the benchmark).
 2. **68 training skills** — community-authored skills from public registries (mutation hosts for the fine-tuning corpus); the exact pool is manifested in `artifact/data/clawhub/train_community_skills.csv`.
 
 The strict separation ensures no train/test contamination.
 
-> Not covered here: the **200 in-the-wild ClawHub skills** used for the Table VII
+> Not covered here: the **200 in-the-wild ClawHub skills** used for the Table 7
 > wild evaluation (`claim05`) are scanned *unmutated*, so they are not a mutation
 > host collection — see `artifact/data/clawhub/clawhub_skills.csv` (pools
 > `clean_pool`/`clean_175`/`finding8_*`).
@@ -18,8 +18,8 @@ These are released by Anthropic for Claude. The bundled `anthropic` crawler
 backend clones the official repo and copies the 17 paper skills for you:
 
 ```bash
-# via run.sh (populates ./skills, then mutates the pool):
-./run.sh --crawl 17 --registry anthropic --skills-dir ./skills
+# via run.sh (populates ./skills/anthropic, then mutates the pool):
+./run.sh --crawl 17 --registry anthropic --skills-dir ./skills/anthropic
 # or directly:
 python scripts/crawl_skills.py --registry anthropic --target-count 17 \
        --output-dir ${SKILLMUTATOR_DATA_ROOT}/skills/eval-anthropic-17
@@ -49,8 +49,8 @@ To assemble your own pool of community skills, you can either:
 ### Option A — Use the included ClawHub crawler
 
 ```bash
-# via run.sh (populates ./skills, then mutates the pool):
-./run.sh --crawl 68 --registry clawhub --skills-dir ./skills
+# via run.sh (populates ./skills/clawhub, then mutates the pool):
+./run.sh --crawl 68 --registry clawhub --skills-dir ./skills/clawhub
 # or directly:
 python scripts/crawl_skills.py --registry clawhub --target-count 68 \
        --output-dir ${SKILLMUTATOR_DATA_ROOT}/skills/train-community-68
@@ -69,7 +69,7 @@ To add another registry, drop `src/skill_mutator/crawler/<registry>.py` with a
 
 ### Option B — Manual collection
 
-Drop your own 68-skill pool into `${SKILLMUTATOR_DATA_ROOT}/skills/train-community-68/<skill-name>/SKILL.md`. The fine-tuning side (`skill-scanner-finetune/scripts/prepare_dataset.py`) only requires `SKILL.md` + accompanying scripts in any layout.
+Drop your own 68-skill pool into `${SKILLMUTATOR_DATA_ROOT}/skills/train-community-68/<skill-name>/SKILL.md`. The fine-tuning side (`artifact/code/finetuning-framework/scripts/prepare_dataset.py`) only requires `SKILL.md` + accompanying scripts in any layout.
 
 ## License hygiene
 
@@ -77,5 +77,5 @@ Before redistributing or fine-tuning on a skill body, please check its license. 
 
 ## Why two collections?
 
-- The **evaluation** collection is fixed and public, so a third party can verify Table 1 / Table 2.
+- The **evaluation** collection is fixed and public, so a third party can verify Tables 3–5 and Figure 4.
 - The **training** collection is freely-substitutable; the fine-tuning result holds as long as the pool is roughly comparable in size, diversity of attack surface, and natural-language styles.

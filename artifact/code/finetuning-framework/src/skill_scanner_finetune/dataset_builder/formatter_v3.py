@@ -232,7 +232,8 @@ def _discover_skill_items(skills_dir, iters):
 
 
 def build_corpus(skills_dir, teacher_model: str = "gpt-4o-mini",
-                 iters=(0, 1, 2), output_path=None, provider: str = "openai"):
+                 iters=(0, 1, 2), output_path=None, provider: str = "openai",
+                 max_items: int = 0):
     """Walk `skills_dir`, distill each skill with the teacher, write JSONL.
 
     Args:
@@ -241,6 +242,8 @@ def build_corpus(skills_dir, teacher_model: str = "gpt-4o-mini",
         iters:         iterations to include for mutation-tree skills.
         output_path:   JSONL file to write (one training example per line).
         provider:      teacher provider label (default "openai").
+        max_items:     distill at most this many skills, benign ones first
+                       (0 = all).
 
     Returns the output path. Requires OPENAI_API_KEY at call time.
     """
@@ -256,6 +259,9 @@ def build_corpus(skills_dir, teacher_model: str = "gpt-4o-mini",
     items = _discover_skill_items(skills_dir, itset)
     if not items:
         raise SystemExit(f"[build_corpus] no SKILL.md found under {skills_dir}")
+    if max_items and max_items > 0 and len(items) > max_items:
+        items = sorted(items, key=lambda x: x["is_malicious"])[:max_items]  # stable: benign first
+        print(f"[build_corpus] distilling {max_items} of the skills found (max_items)")
 
     llm = _OpenAITeacher(model_name=teacher_model, provider=provider)
     pipeline = SecurityAnalysisPipelineV3(llm)

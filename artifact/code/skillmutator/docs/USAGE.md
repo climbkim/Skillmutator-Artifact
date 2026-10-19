@@ -63,7 +63,7 @@ verdict = judge_call(
 # -> {"detected": True/False, "confidence": 0.0..1.0, "reason": "..."}
 ```
 
-This is the same judge used to produce every LLM-scanner verdict in Table 1 of the paper.
+This is the same judge used to produce every LLM-scanner verdict in Table 4 of the paper.
 
 ## Environment variables
 
@@ -76,4 +76,4 @@ This is the same judge used to produce every LLM-scanner verdict in Table 1 of t
 | `HF_TOKEN`               | —                           | optional (HuggingFace-served scanners)   |
 | `HF_ENDPOINT_URL`        | placeholder                 | dedicated HF endpoint URL (override)     |
 | `SKILL_MUTATOR_DATA_DIR` | `./data`                    | top-level output root for runs           |
-| `SKILLMUTATOR_DATA_ROOT` | `./data/skillmutator-data`  | unified data tree (read by `analysis/`)  |
+| `SKILLMUTATOR_DATA_ROOT` | `<skillmutator>/demo-data`  | unified data tree (read by `analysis/`)  |

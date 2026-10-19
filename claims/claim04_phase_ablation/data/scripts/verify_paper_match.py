@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Table VI (tab:finetune_rq2, Finding 6) — recompute the four-phase schema
+"""Table 6 (Finding 6) — recompute the four-phase schema
 progression detection rates (and the schema/refine/prefill decomposition deltas)
 from the aggregate built by build_table7.py, then hand them to the shared verifier,
 which writes results/derived/table6_finetune_rq2.csv and compares them cell-by-cell
@@ -45,5 +45,5 @@ if len(rate) >= 6:
 
 sys.exit(V.verify(__file__, "metrics.json", computed,
                   results_name="table6_finetune_rq2.csv",
-                  title="Table VI - recomputed vs expected/metrics.json (paper golden)\n",
+                  title="Table 6 - recomputed vs expected/metrics.json (paper golden)\n",
                   counts=counts))

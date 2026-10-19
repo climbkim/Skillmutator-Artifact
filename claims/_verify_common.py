@@ -12,7 +12,7 @@ No expected values live in the Python; edit expected/<golden>.json to change the
 
 Golden JSON schema:
   {
-    "paper_element": "Table VII (tab:wild_eval)",     # free text
+    "paper_element": "Table 7",     # free text
     "metrics": { "<label>": <expected number>, ... }, # paper-cited values
     "tolerance_pp": 1.0                               # global tolerance, OR:
     # "tolerance_pp": { "_default": 1.0, "<label>": 0.5, ... }

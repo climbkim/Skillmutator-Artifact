@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Table III (tab:refusal_i4_summary) — recompute per-oracle refusal metrics
+"""Table 3 — recompute per-oracle refusal metrics
 (n, final iter-4 refusal rate, per-iteration refusal counts iter0..4, and the
 iter-4 mechanism split silent/explicit/partial) from the bundled aggregate
 (data/derived/table4_aggregate.csv), then hand them to the shared verifier,
@@ -38,5 +38,5 @@ for oracle in ORACLES:
 
 sys.exit(V.verify(__file__, "metrics.json", computed,
                   results_name="table3_refusal.csv",
-                  title="Table III — recomputed vs expected/metrics.json (paper golden)\n",
+                  title="Table 3 — recomputed vs expected/metrics.json (paper golden)\n",
                   counts=counts))

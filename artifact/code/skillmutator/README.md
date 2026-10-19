@@ -31,19 +31,19 @@ local scanner from it — lives in the sister package
 ## Install
 
 ```bash
-git clone https://github.com/climbkim/SkillMutator.git
-cd skill-mutator
-pip install -e .[all]
-cp .env.example .env   # then fill in OPENAI_API_KEY (and optionally HF_TOKEN, SNYK_TOKEN, ...)
+# from the artifact root
+./install.sh --generate   # .venv + mutation/scan deps + skill-security-scan + Snyk Agent Scan
+cp .env.example .env      # then fill in OPENAI_API_KEY (and optionally SNYK_TOKEN, ...)
 ```
 
 Requirements: Python 3.10+, plus an API key for whichever provider you use as
 the mutator/scanner backend.
 
 The `snyk` scanner is the third-party `snyk-agent-scan` package (Apache-2.0,
-**not** vendored); `pip install -e .[all]` (or `.[scan]`) pulls it in, and it
-needs a `SNYK_TOKEN` at run time. Without it the Snyk column is simply left
-unavailable — the LLM scanner and `skill-security` still run.
+**not** vendored); `./install.sh --generate` installs it, and it
+needs a `SNYK_TOKEN` at run time. Without a valid token (a `.env.example`
+placeholder counts as none) the Snyk cells are shown as n/a — the LLM scanner and
+`skill-security` still run.
 
 ## Quickstart
 
@@ -58,8 +58,9 @@ python scripts/run_mutation.py path/to/skill \
 # Run a single scanner against a (possibly mutated) skill.
 python scripts/run_scanner.py path/to/skill --scanner llm
 
-# Sweep many skills at once (mutates every skill folder under ./skills).
-python scripts/run_all_skills.py --provider openai
+# Mutate, scan, judge and build Tables 3-5 + Figure 4 (sample skill; see docs/REPRODUCE.md
+# for the full benchmark).
+./run.sh
 ```
 
 Mutation outputs land at

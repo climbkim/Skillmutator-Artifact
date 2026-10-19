@@ -1,18 +1,19 @@
-"""build_tab_finetune.py — Finetune-RQ1 paper table.
+"""build_tab_finetune.py — paper Figure 5 detection matrix (base / no-prefill / prefill).
 
 Aggregates per-folder judge_summary.csv into a 4-model x 3-variant detection
-rate matrix. Reads from ../<Model>_<variant>/judge_summary.csv.
+rate matrix. Reads <root>/<Model>_<variant>/judge_summary.csv (--root, default ".."
+relative to the working directory; analysis/judge_scan_tree.py writes these files).
 
 Excluded:
   - Llama-3.1-8B-Instruct_base (denominator 65/76, scan incomplete)
   - Yi-Coder-9B-Chat (all 3 variants pending v3 truncate rerun)
 
-Outputs:
+Outputs (under <root>):
   outputs/tab_finetune.csv      one row per (model, variant) cell
   outputs/tab_finetune.tex      paper-shaped LaTeX
   outputs/tab_finetune_by_cat.csv  per-category detection per cell
 """
-import csv, sys
+import argparse, csv, sys
 from pathlib import Path
 from collections import defaultdict
 
@@ -58,6 +59,14 @@ def load_cell(model_dir: str, variant: str):
 
 
 def main():
+    global ROOT, OUT_CSV, OUT_TEX, OUT_CAT
+    ap = argparse.ArgumentParser(description="Figure 5 detection matrix from judge_summary.csv files.")
+    ap.add_argument("--root", default="..",
+                    help="folder holding <Model>_<variant>/judge_summary.csv (default: ..)")
+    ROOT = Path(ap.parse_args().root)
+    OUT_CSV = ROOT / "outputs" / "tab_finetune.csv"
+    OUT_TEX = ROOT / "outputs" / "tab_finetune.tex"
+    OUT_CAT = ROOT / "outputs" / "tab_finetune_by_cat.csv"
     OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
 
     rows = []
@@ -105,7 +114,6 @@ def main():
     L.append(r"\begin{table}[tb]")
     L.append(r"\centering")
     L.append(r"\caption{Detection rate (\%) of base models vs.\ fine-tuned variants on the 76-case SkillMutator benchmark (GPT-5.4 judge).}")
-    L.append(r"\label{tab:finetune_rq2}")
     L.append(r"\footnotesize")
     L.append(r"\setlength{\tabcolsep}{4pt}")
     L.append(r"\begin{tabular}{lrrr}")
@@ -143,7 +151,7 @@ def main():
     print(f"[saved] {OUT_CSV}")
     print(f"[saved] {OUT_TEX}")
     print(f"[saved] {OUT_CAT}\n")
-    print(f"=== Finetune-RQ1: detection rate (%) on 76-case benchmark, gpt-5.4 judge ===\n")
+    print(f"=== Figure 5: detection rate (%) on the 76-case benchmark, gpt-5.4 judge ===\n")
     print(f"{'Model':<32}" + "".join(f"{v_label:>22}" for _, v_label in VARIANTS))
     print("-" * 100)
     for _, label in MODELS:

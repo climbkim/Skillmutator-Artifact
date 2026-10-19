@@ -1,6 +1,6 @@
 {
-  "paper_element": "Table VII (tab:wild_eval, Finding 7) — in-the-wild ClawHub, n=200 (100 clean + 100 suspicious, 25 per severity tier). Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
-  "source": "Skillmutator.tex \\label{tab:wild_eval}",
+  "paper_element": "Table 7 (Finding 7) — in-the-wild ClawHub, n=200 (100 clean + 100 suspicious, 25 per severity tier). Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
+  "source": "paper (camera-ready), Table 7, §6.5 Further Analyses",
   "metrics": {
     "clean/None": 92.0,
     "suspicious/LOW": 60.0,

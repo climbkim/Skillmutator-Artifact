@@ -12,10 +12,13 @@
 #   Tier 2  sample skill (no train) live mutate->scan->build on ONE sample skill
 #                                  (skillmutator, CPU+API) + released-adapter scan
 #                                  on the bundled sample (finetune, GPU).
-#   Tier 3  paper skills (no train) download the paper's skills and reproduce at
-#                                  full scale with the RELEASED adapter. API +GPU
-#   Tier 4  full incl. training    full 3-oracle benchmark (CPU+API) + LoRA
-#                                  training from scratch (finetune, A100 80GB).
+#   Tier 3  paper skills (no train) live mutate->scan->build on the paper's 17
+#                                  Anthropic skills, one oracle at default settings
+#                                  (CPU+API) + released-adapter scan (finetune, GPU).
+#   Tier 4  full benchmark + train demo  full 3-oracle benchmark (CPU+API) + a short
+#                                  LoRA training run on this run's mutations
+#                                  (finetune, A100 80GB); scans use the released
+#                                  adapter. Paper-scale training is not automated.
 #
 # The tier sets how deep the reproduction goes and thus its hardware needs. The
 # only optional axis is whether you have a GPU:
@@ -35,6 +38,7 @@
 # before each tier runs (and are documented in full in use.txt).
 # =============================================================================
 set -euo pipefail
+_CALLER_PWD="$PWD"
 cd "$(dirname "$0")"
 
 TIER=""
@@ -42,21 +46,30 @@ NO_GPU=0
 ENV_FILE=""
 DRY=0
 while [ $# -gt 0 ]; do
+  case "$1" in --tier|--env-file)
+    [ $# -ge 2 ] || { echo "error: $1 needs a value (try --help)" >&2; exit 2; } ;; esac
   case "$1" in
     --tier)      TIER="$2"; shift 2 ;;
     --no-gpu)    NO_GPU=1; shift ;;
     --env-file)  ENV_FILE="$2"; shift 2 ;;
     --dry-run)   DRY=1; shift ;;
-    -h|--help)   sed -n '2,46p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h|--help)   awk 'NR>1{print} NR>2 && /^# =====/{exit}' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "unknown option: $1 (try --help)"; exit 2 ;;
   esac
 done
 
 case "$TIER" in 1|2|3|4) ;; *) echo "error: --tier must be 1, 2, 3 or 4 (try --help)"; exit 2 ;; esac
+if [ -n "$ENV_FILE" ]; then
+  case "$ENV_FILE" in /*|[A-Za-z]:*) ;; *) ENV_FILE="$_CALLER_PWD/$ENV_FILE" ;; esac
+  [ -f "$ENV_FILE" ] || { echo "error: --env-file not found: $ENV_FILE" >&2; exit 2; }
+fi
 
 SM="artifact/code/skillmutator"
 FT="artifact/code/finetuning-framework"
+# Tiers 2-4 keep the live pipeline's data tree inside the skillmutator folder.
+export SKILLMUTATOR_DATA_ROOT="$PWD/$SM/demo-data"
 CLAIMS="claims"
+source "$CLAIMS/_pyenv.sh"   # activate .venv (from install.sh) / python -> python3 fallback
 
 # Load env vars from --env-file, else from `.env` beside run.sh, so every
 # sub-script inherits them. Placeholder values (your_..._here / sk-xxx / hf_xxx /
@@ -90,19 +103,19 @@ print_banner() {
   echo "=============================================================="
   case "$TIER" in
   1) cat <<'T1'
- Data verification — regenerate every paper table/figure from bundled outputs.
+ Data verification — regenerate the 12 claimed tables/figures from bundled outputs.
    HW : any CPU (no GPU).           SW : ./install.sh   (core deps only)
    Key: none.   Time: ~minutes.     Cost: $0 (no API calls).   (--no-gpu: no effect)
 T1
   ;;
   2) cat <<'T2'
  Sample skill, no training.
-   skillmutator: live mutate->scan->build on ONE sample skill (Tbl III/IV/V+Fig4). CPU+API.
-   finetune    : released-adapter scan of the bundled sample (MODE=demo, no train). GPU.
+   skillmutator: live mutate->scan->build on ONE sample skill (Tables 3/4/5 + Figure 4). CPU+API.
+   finetune    : released-adapter scan of the bundled sample (no train). GPU.
    HW : CPU (skillmutator) + a CUDA GPU ~16GB for the 7B adapter scan (finetune).
         --no-gpu -> run the skillmutator demo only, skip the FT scan.
    SW : ./install.sh --generate  (+ --finetune for the finetune side).
-   Key: OPENAI_API_KEY (oracle + LLM scanner + judge; teacher + judge on FT side).
+   Key: OPENAI_API_KEY (oracle + LLM scanner + judge; judge on the FT side).
    Time: skillmutator ~3-6 min; finetune ~10-20 min (model load dominates).
    Cost (est., grounded in claim06):
      gpt-4o-mini default : a few US cents + ~$0.5 GPU (FT).
@@ -110,46 +123,49 @@ T1
 T2
   ;;
   3) cat <<'T3'
- Paper skills, no training (RELEASED adapter).
-   Downloads the paper's skills and reproduces at full scale. The skillmutator
-   step auto-downloads the 17 Anthropic evaluation skills (git clone via
-   `--crawl --registry anthropic`); the ClawHub community backend
-   (`--registry clawhub`, reading artifact/data/clawhub/clawhub_skills.csv) is
-   also available for the wild-eval / training corpus. See
-   artifact/code/skillmutator/docs/SKILLS_SETUP.md.
-   HW : CPU + network (skillmutator) + A100-class GPU for vLLM batch scan (FT).
-        --no-gpu -> run the skillmutator full-scale mutation only, skip the FT scan.
+ Paper skills, default settings, no training.
+   skillmutator: live mutate->scan->build on the paper's 17 Anthropic evaluation
+                 skills (git clone via `--crawl --registry anthropic`), ONE oracle
+                 at the default settings: gpt-4o-mini oracle and judge, 2 iterations
+                 (iter_0-1), no cross LLM scans, no no-select pass. This is not the
+                 paper's procedure (3 oracles, iter_0-4, gpt-5.4 judge, cross scans,
+                 no-select pass); use.txt section 4 gives the paper-setting command
+                 for one oracle, and Tier 4 runs all of it. The ClawHub backend
+                 (`--registry clawhub`, artifact/data/clawhub/clawhub_skills.csv) is
+                 also available; see artifact/code/skillmutator/docs/SKILLS_SETUP.md.
+   finetune    : released-adapter scan of one mutated + one benign skill (same as
+                 Tier 2, no train). GPU.
+   HW : CPU + network (skillmutator) + a CUDA GPU ~16GB for the 7B adapter scan.
+        --no-gpu -> run the skillmutator step only, skip the FT scan.
    SW : ./install.sh --generate --finetune ; network (skills + HF adapter).
    Key: OPENAI_API_KEY.
-   Time: hours (mutation scans are 15-76 s each; FT batch scan ~1-2 A100-h).
-   Cost (est., single oracle, n~76):
-     gpt-4o-mini : ~$2-3 API + ~1-2 A100-h (~$2-4).
-     GPT-5.4     : ~$15-25 API + ~1-2 A100-h (~$2-4).
+   Time: hours (mutation scans are 15-76 s each); finetune ~10-20 min.
+   Cost (est.): ~$2-3 API (gpt-4o-mini) + ~$0.5 GPU (FT).
 T3
   ;;
   4) cat <<'T4'
- FULL reproduction incl. training.  ~1.5 DAYS total, budgeted generously.
-   skillmutator: full benchmark over 3 oracles (gpt-4o-mini, gpt-5.4-mini, gpt-5.4). CPU+API.
-   finetune    : teacher data-gen + LoRA training of Figure 5's 4 base families
-                 from scratch + inference. A100 80GB.
-        --no-gpu -> run the 3-oracle mutation benchmark only, skip FT train+scan.
-   HW : NVIDIA A100 80 GB (training + vLLM).   SW : ./install.sh --all ; network.
+ Full mutation benchmark + fine-tuning training demo.
+   skillmutator: full benchmark over 3 oracles (gpt-4o-mini, gpt-5.4-mini, gpt-5.4),
+                 5 iterations (iter_0-4), gpt-5.4 evaluation judge, cross LLM scans
+                 (Table 4), + a gpt-5.4 no-select pass with cross LLM scans,
+                 3 iterations (Table 5). CPU+API.
+   finetune    : training-process demo. Teacher data-gen on up to 24 skills from the
+                 last skillmutator pass, a 5-step LoRA run (Qwen), then a scan of one
+                 mutated + one benign skill with the RELEASED adapter. A100 80GB.
+                 It does not retrain the paper's adapters.
+        --no-gpu -> run the 3-oracle mutation benchmark only, skip the finetune demo.
+   HW : NVIDIA A100 80 GB (finetune demo).   SW : ./install.sh --all ; network.
    Key: OPENAI_API_KEY.
-   Per-stage time / cost (GPU at the paper's $1.10/h, claim06):
-     0 setup    (deps + base 7B ~15GB + adapters ~2.5GB) CPU+net  ~1.5 h  bandwidth
-     1 skillmut (mutate 17 skills x3 oracles + LLM-scan)  CPU+API  ~3   h  ~$30 API (est.)
-     2 data-gen (teacher 4-phase distill -> 1219-ex corpus, ~4,900 calls) API ~5-10 h  ~$40-60 (GPT-5.4 teacher, RECORDED ledger; ~$4 if gpt-4o-mini)
-     3 training (4 base families, 5 epochs, from scratch) A100     ~25  h  ~25 A100-h ~$28 (MEASURED: Qwen 4.5 / Llama 5.0 / Gemma 10.0 / Mistral ~5.5)
-     4 inference(batch-scan eval set per model, vLLM)     A100     ~3   h  ~3-4 A100-h ~$3-4
-     5 judge+build (adjudicate + render floats)           API+CPU  ~1   h  ~$1-3
-     TOTAL                                                A100 80GB ~1.5 day (~40h)  ~$75 (gpt-4o-mini teacher) - ~$130 (GPT-5.4 teacher), incl. ~28 A100-h (~$31)
-   Notes: Fig 5 compares 4 base families, each trained from scratch (loop
-     BASE_MODEL over the 4) -> multi-model training is what makes this ~1.5 days; a
-     single Qwen scanner alone is only 4.5 h. The teacher distillation (stage 2) is
-     the heavy API step -- RECORDED at ~$40-60 with GPT-5.4 (run.sh demo default is
-     gpt-4o-mini ~$4). Stage-1 eval gen is estimated (per-scan scanning ~$3 total).
-     Also redoing every Table VI phase + a/epoch ablation is the full ~72 A100-h
-     (~3-day, ~$80) campaign. Reviewers verify all of it from verdicts at Tier 1.
+   Time / cost (est.):
+     skillmutator : ~3 h+, ~$30+ API, expected ~$200 (the iter_0-4 + no-select + cross-scan +
+                    gpt-5.4 judge run is not measured and costs more)
+     finetune demo: ~1-2 h on an A100 incl. the ~15 GB base-model download
+                    (~$1-2 GPU at the paper's $1.10/h); < $1 API with the default
+                    gpt-4o-mini teacher and judge
+   Paper-scale training (4 base families from scratch, ~25 A100-h MEASURED; full
+     corpus distillation ~$40-60 with the GPT-5.4 teacher) is not automated. The
+     paper's fine-tuning results are verified from bundled verdicts at Tier 1 and
+     its cost in claim06. Manual steps: artifact/code/finetuning-framework/docs/REPRODUCE.md.
 T4
   ;;
   esac
@@ -170,39 +186,47 @@ case "$TIER" in
 
 2)  # Sample skill, no training.
     run_step "skillmutator: sample mutate->scan->build (CPU+API)" \
-      bash "$SM/run.sh" ${ENV_FILE:+--env-file "$ENV_FILE"}
+      bash "$SM/run.sh" --skill examples/skills/weather-cache ${ENV_FILE:+--env-file "$ENV_FILE"}
     if [ "$NO_GPU" = 1 ]; then
       skip_gpu_note "finetune: demo scan (released adapter, no train)"
     else
       run_step "finetune: demo scan (released adapter, no train)" \
-        env MODE=demo SKIP_TRAIN=1 bash "$FT/run.sh"
+        env SKIP_TRAIN=1 bash "$FT/run.sh"
     fi
     ;;
 
 3)  # Paper skills, no training (released adapter).
-    run_step "skillmutator: full-scale over the 17 Anthropic eval skills (auto-cloned, CPU+API)" \
-      bash "$SM/run.sh" --crawl 17 --registry anthropic --skills-dir "$SM/skills" ${ENV_FILE:+--env-file "$ENV_FILE"}
+    run_step "skillmutator: 17 Anthropic eval skills, default settings (auto-cloned, CPU+API)" \
+      bash "$SM/run.sh" --crawl 17 --registry anthropic --skills-dir skills/anthropic ${ENV_FILE:+--env-file "$ENV_FILE"}
     if [ "$NO_GPU" = 1 ]; then
-      skip_gpu_note "finetune: full-scale scan with released adapter (no train)"
+      skip_gpu_note "finetune: demo scan (released adapter, no train)"
     else
-      run_step "finetune: full-scale scan with released adapter (no train)" \
-        env MODE=full SKIP_TRAIN=1 bash "$FT/run.sh"
+      run_step "finetune: demo scan (released adapter, no train)" \
+        env SKIP_TRAIN=1 bash "$FT/run.sh"
     fi
     ;;
 
-4)  # Full reproduction incl. training.
-    # Full benchmark = the 17 Anthropic eval skills mutated by each oracle
-    # (auto-cloned via --crawl --registry anthropic); judge fixed to gpt-5.4.
+4)  # Full mutation benchmark + fine-tuning training demo.
+    # Full benchmark = the 17 Anthropic eval skills (auto-cloned via --crawl
+    # --registry anthropic) mutated by each oracle over 5 iterations
+    # (iter_0-4, Figure 4; the no-select pass uses 3 iterations, iter_0-2). The LLM-scanner rows are adjudicated by the gpt-5.4
+    # evaluation judge, and each scenario's final iteration is also scanned by the
+    # other two LLM scanners (Table 4 cross cells). All runs accumulate into one
+    # data tree (--keep-data); a gpt-5.4 no-select pass adds Table 5.
+    run_step "clean the live data tree ($SM/demo-data)" rm -rf "$SM/demo-data"
     for m in gpt-4o-mini gpt-5.4-mini gpt-5.4; do
-      run_step "skillmutator: full benchmark (oracle=$m, judge=gpt-5.4, CPU+API)" \
-        bash "$SM/run.sh" --model "$m" --judge-model gpt-5.4 \
-             --crawl 17 --registry anthropic --skills-dir "$SM/skills" ${ENV_FILE:+--env-file "$ENV_FILE"}
+      run_step "skillmutator: full benchmark (oracle=$m, select, judge=gpt-5.4, CPU+API)" \
+        bash "$SM/run.sh" --model "$m" --judge-model gpt-5.4 --iters 5 --cross-scan --keep-data \
+             --crawl 17 --registry anthropic --skills-dir skills/anthropic ${ENV_FILE:+--env-file "$ENV_FILE"}
     done
+    run_step "skillmutator: no-select pass (oracle=gpt-5.4, judge=gpt-5.4; Table 5)" \
+      bash "$SM/run.sh" --model gpt-5.4 --judge-model gpt-5.4 --iters 3 --mode no-select --cross-scan --keep-data \
+           --crawl 17 --registry anthropic --skills-dir skills/anthropic ${ENV_FILE:+--env-file "$ENV_FILE"}
     if [ "$NO_GPU" = 1 ]; then
-      skip_gpu_note "finetune: full train-from-scratch + scan"
+      skip_gpu_note "finetune: training demo (data-gen + 5-step LoRA run) + released-adapter scan"
     else
-      run_step "finetune: full train-from-scratch + scan" \
-        env MODE=full bash "$FT/run.sh"
+      run_step "finetune: training demo (data-gen + 5-step LoRA run) + released-adapter scan" \
+        bash "$FT/run.sh"
     fi
     ;;
 esac

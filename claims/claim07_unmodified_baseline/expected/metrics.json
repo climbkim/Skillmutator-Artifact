@@ -1,6 +1,6 @@
 {
-  "paper_element": "Table X (tab:baseline_aggregate) — per-scanner finding counts on the 17 unmodified Anthropic skills. Each scanner contributes 4 checked cells: skills_with (# of 17 skills with >=1 finding), mean, max, total. Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
-  "source": "Skillmutator.tex \\label{tab:baseline_aggregate}",
+  "paper_element": "Table 10 (Appendix B.3 Baseline Findings on Unmodified Skills) — per-scanner finding counts on the 17 unmodified Anthropic skills. Each scanner contributes 4 checked cells: skills_with (# of 17 skills with >=1 finding), mean, max, total. Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
+  "source": "paper (camera-ready), Table 10, Appendix B.3 Baseline Findings on Unmodified Skills",
   "metrics": {
     "skill-security-scan/skills_with": 9,
     "skill-security-scan/mean": 18.18,

@@ -1,6 +1,6 @@
 {
-  "paper_element": "Table VIII (tab:cost_envelope, Finding 4) — per-scan operating cost on the GPT-5.4 oracle benchmark (n=76): $/skill, recall %, and $/detected per scanner, plus the argmin (cheapest $/detected). Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
-  "source": "Skillmutator.tex \\label{tab:cost_envelope}",
+  "paper_element": "Table 8 (Finding 8) — per-scan operating cost on the GPT-5.4 oracle benchmark (n=76): $/skill, recall %, and $/detected per scanner, plus the argmin (cheapest $/detected). Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
+  "source": "paper (camera-ready), Table 8, §6.5 Further Analyses",
   "metrics": {
     "Qwen-7B + ours/$per_skill": 0.00414,
     "Qwen-7B + ours/recall": 88.16,

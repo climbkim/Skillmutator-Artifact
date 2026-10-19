@@ -1,12 +1,36 @@
 {
-  "paper_element": "Table XI / tab:cell_metrics (Appendix B) — cell-level confusion matrix for the fine-tuned Qwen2.5-Coder-7B scanner (prefill, GPT-5.4 oracle, n_mut=76, n_unmod=221; TP=67 FP=43 FN=9 TN=178). Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
-  "source": "Skillmutator.tex \\label{tab:cell_metrics}",
+  "paper_element": "Table 11 (Appendix B.4) — cell-level confusion matrix for the fine-tuned Qwen2.5-Coder-7B scanner (prefill, GPT-5.4 oracle, n_mut=76, n_unmod=221; TP=67 FP=43 FN=9 TN=178). TP/FN/FP/TN are recounted from raw/*.csv; FP skills/<category> is the per-category FP spread cited in the last paragraph of Appendix B.4. Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
+  "source": "paper (camera-ready), Table 11, Appendix B.4 Per-Category Classifier Metrics",
   "metrics": {
+    "TP": 67,
+    "FN": 9,
+    "FP": 43,
+    "TN": 178,
     "Sensitivity/Recall": 88.16,
     "Specificity": 80.54,
     "Precision": 60.91,
     "F1": 72.04,
-    "Balanced Acc": 84.35
+    "Balanced Acc": 84.35,
+    "FP skills/Advertising Injection": 1,
+    "FP skills/Brand Hijacking": 3,
+    "FP skills/Code Quality Degradation": 7,
+    "FP skills/Configuration Weakening": 1,
+    "FP skills/Data Exfiltration": 1,
+    "FP skills/Data Integrity Risks": 5,
+    "FP skills/Disruption & Interference": 1,
+    "FP skills/False Attribution": 1,
+    "FP skills/Information Gathering": 15,
+    "FP skills/Over-engineering": 3,
+    "FP skills/Persistence Control": 3,
+    "FP skills/Privilege Escalation": 0,
+    "FP skills/Supply Chain Attack": 2
   },
-  "tolerance_pp": 0.05
+  "tolerance_pp": {
+    "_default": 0,
+    "Sensitivity/Recall": 0.05,
+    "Specificity": 0.05,
+    "Precision": 0.05,
+    "F1": 0.05,
+    "Balanced Acc": 0.05
+  }
 }

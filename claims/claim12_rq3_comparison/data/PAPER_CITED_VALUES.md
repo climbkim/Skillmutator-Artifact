@@ -1,10 +1,10 @@
-# PAPER_CITED_VALUES — `fig:rq3_finding1`
+# PAPER_CITED_VALUES — Figure 6, §6.4 Fine-tuning Effectiveness
 
-Paper canonical values from `paper.tex` L848-855 (label `\label{fig:rq3_finding1}`).
+Paper canonical values from paper Figure 6, §6.4 Fine-tuning Effectiveness.
 
 ## Header
 
-- Caption: "Detection rate (%) on the GPT-5.4 oracle benchmark ($n{=}76$, `select` mode, GPT-5.4 judge). Rows are grouped into proprietary scanners, open-weight baselines, and the fine-tuned Qwen2.5-Coder-7B-Instruct scanner."
+- Caption: "Detection rate (%) on the GPT-5.4 oracle benchmark ($n{=}76$)."
 - Benchmark: GPT-5.4 oracle, $n=76$, `select` mode
 - Judge: GPT-5.4
 

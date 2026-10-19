@@ -1,6 +1,6 @@
-"""build_table7.py — aggregate Table VI four-phase schema ablation rows.
+"""build_table7.py — aggregate Table 6 four-phase schema ablation rows.
 
-Reproduces the six-row progression of Table VI (tab:finetune_rq2): each phase of
+Reproduces the six-row progression of Table 6: each phase of
 the training schema is added in turn (Phase 1..4), then deterministic refinement,
 then forced Phase-4-header prefilling. Reads ../judge/*.csv and emits
 ../derived/table7_aggregate.csv.
@@ -28,7 +28,7 @@ def rate(csv_path: Path) -> tuple[int, int, float]:
 
 
 def main() -> int:
-    # Six-row four-phase schema chain (Table VI / tab:finetune_rq2), all rows
+    # Six-row four-phase schema chain (Table 6), all rows
     # evaluated under the 4-section judge for a consistent progression.
     config = [
         ("Phase 1 (Purpose Grounding)",         "phase1_noprefill.csv"),

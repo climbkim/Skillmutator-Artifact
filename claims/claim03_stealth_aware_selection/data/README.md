@@ -1,26 +1,24 @@
-# Table V — select vs no-select Mode Comparison (GPT-5.4 oracle)
+# Table 5 — select vs no-select Mode Comparison (GPT-5.4 oracle)
 
 ## (1) Paper location
 
-- **LaTeX label**: `\label{tab:select_vs_noselect}`
-- **Paper lines**: L807–L828
-- **Caption**: "Detection rate (%) for the `select` and `no-select` modes on the
-  GPT-5.4 oracle dataset, adjudicated by GPT-5.4 judge."
+- **Paper location**: Table 5, §6.3.1 Stealth-aware Attack Selection
+- **Caption**: "Detection rate (%) for the `select` and `no-select` modes on the GPT-5.4 oracle dataset."
 
-## (2) PAPER_TARGET_VALUES (paper.tex as-is)
+## (2) PAPER_TARGET_VALUES (camera-ready paper)
 
 | Scanner | select | no-select | Δ |
 |---|---|---|---|
-| skill-security-scan | 7.89% | 12.09% | +4.20pp |
-| Snyk Agent Scan | 9.21% | 16.74% | +7.53pp |
-| SkillScan API | 1.32% (1/76) | 5.43% (12/221) | +4.11pp |
-| GPT-4o-mini scanner | 23.68% | 36.74% | +13.06pp |
-| GPT-5.4-mini scanner | 78.95% | 87.91% | +8.96pp |
-| GPT-5.4 scanner | **86.84%** | **91.63%** | +4.79pp |
-| **Average (6 scanners)** | **34.65%** | **41.76%** | **+7.10pp** |
+| skill-security-scan | 7.89% | 12.33% | +4.43pp |
+| Snyk Agent Scan | 9.21% | 16.89% | +7.68pp |
+| SkillScan API | 1.32% (1/76) | 5.48% (12/219) | +4.16pp |
+| GPT-4o-mini scanner | 23.68% | 36.07% | +12.39pp |
+| GPT-5.4-mini scanner | 78.95% | 87.67% | +8.72pp |
+| GPT-5.4 scanner | **86.84%** | **91.32%** | +4.48pp |
+| **Average (6 scanners)** | **34.65%** | **41.63%** | **+6.98pp** |
 
-(All scanners: select n=76 / no-select n=215. SkillScan was added later with its own scenario set
-n=76/221, so its denominator differs — paper notation select 1.3% / no-select 5.4%.)
+(All scanners, SkillScan included: select n=76 / no-select n=219 — paper notation for SkillScan
+select 1.3% / no-select 5.5%.)
 
 ## (3) Data source
 
@@ -31,7 +29,8 @@ n=76/221, so its denominator differs — paper notation select 1.3% / no-select 
 | LLM scanners | same `.../llm/{gpt-4o-mini,gpt-5.4-mini,gpt-5.4-self}/scan.md` + judge_v2.json |
 
 - select: 76 (skill, cat) cells (stealth-selected attack categories per skill)
-- no-select: 215 cells (all 13 categories per all 17 skills)
+- no-select: 221 (skill, cat) scenarios (all 13 categories × 17 skills); the 219 with at least one refusal-free mutation form the denominator (2 were refusals at every
+  iteration; 4 refused at iter_0 and are evaluated on their latest refusal-free mutation, §6.1 Experimental Setup)
 
 Decision criterion: each scanner's verdict at the **last iteration** (carry-forward across refusals).
 

@@ -2,9 +2,8 @@
 
 ## (1) Paper location
 
-- **LaTeX label**: `\label{fig:prefill_delta_comparison}`
-- **Paper location**: §6.4, before Finding 4
-- **Caption**: "Detection rate (%) of base open-weight models (Qwen2.5-Coder-7B-Instruct, Llama-3.1-8B-Instruct, Mistral-7B-Instruct-v0.3, Gemma-2-9b-it) and their fine-tuned variants under no-prefill and Phase~4-prefill conditions, evaluated under the GPT-5.4 judge (left) and the Claude-Opus-4.7 judge (right). Dashed line: frontier GPT-5.4 scanner's detection rate."
+- **Paper location**: Figure 5, §6.4 Fine-tuning Effectiveness (Finding 5)
+- **Caption**: "Detection rate (%) of base open-weight models and their fine-tuned variants under no-prefill and Phase 4-prefill conditions, evaluated under the GPT-5.4 judge (left) and the Claude-Opus-4.7 judge (right). Dashed line: frontier GPT-5.4 scanner's detection rate."
 
 ## (2) PAPER_TARGET_VALUES
 
@@ -19,25 +18,29 @@ Headline numbers:
 
 ## (3) Data source
 
-The data is derived from `table6_finetune_base_models/` (4 model families, GPT-5.4 judge) + Claude-Opus-4.7 cross-family judge re-evaluation.
+The data is derived from claim11 (4 model families, GPT-5.4 judge) + Claude-Opus-4.7 cross-family judge re-evaluation.
 
 | Source | Coverage |
 |---|---|
-| `../table6_finetune_base_models/derived/` | GPT-5.4 judge panel (left) — base + no-prefill + prefill rates for Qwen / Llama / Mistral / Gemma |
+| `../../claim11_finetune_base_models/data/derived/` | GPT-5.4 judge panel (left) — base + no-prefill + prefill rates for Qwen / Llama / Mistral / Gemma |
 | the cross-family judge panel data (bundled under artifact/data/paper_shared/cross_family_judge/) | Claude-Opus-4.7 judge panel (right) — 1,126-prompt cross-family re-evaluation |
 
 The data table is hard-coded as constants inside `scripts/plot_prefill_delta.py` (paper canonical chain 4-section consistent).
 
-### Figure files (top-level)
-- `prefill_delta_comparison.pdf` — paper-included vector
-- `prefill_delta_comparison.png` — preview raster
+### Figure files
+Bundled (this folder): `prefill_delta_comparison.{pdf,png}` — the paper's Figure 5 layout (one shared legend, "GPT-5.4 Scanner" reference line).
+
+`scripts/plot_prefill_delta.py` re-plots the same values to `../results/figures/` (not tracked by git), in its own layout:
+- `option_a_grouped_bar.{pdf,png}` — two panels (GPT-5.4 judge, Claude-Opus-4.7 judge), legend upper-left
+- `option_a_grouped_bar_legend_right.{pdf,png}` — same, legend in each panel
+- `option_b_delta_plot.{pdf,png}` — prefill − no-prefill per family and judge
 
 ## (4) Reproduction commands
 
 ```bash
-cd figure5_prefill_delta_comparison
-python scripts/plot_prefill_delta.py
-# → prefill_delta_comparison.{pdf,png}
+bash ../run.sh                           # verify Figure 5 values
+python scripts/plot_prefill_delta.py     # needs matplotlib
+# → ../results/figures/option_a_grouped_bar.{pdf,png}, ... (3 figures)
 ```
 
 ## (5) Dependencies

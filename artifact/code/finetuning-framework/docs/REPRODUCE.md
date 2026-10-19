@@ -1,6 +1,6 @@
 # Reproducing the paper (fine-tuning side)
 
-This document covers the fine-tuning results (paper Table VI phase-schema ablation, Figure 5 cross-family comparison, and Figure 6 detection-vs-proprietary) and §6.4 Findings 4–6 from the Fine-tuning Effectiveness section. The benchmark itself — Table IV (cross-scanner detection) and Table III (oracle refusal) — is reproduced from the mutation/benchmark side of this repository (`artifact/code/skillmutator/`, `claims/`).
+This document covers the fine-tuning results (paper Table 6 phase-schema ablation, Figure 5 cross-family comparison, and Figure 6 detection-vs-proprietary) and §6.4 Findings 4–6 from the Fine-tuning Effectiveness section. The benchmark itself — Table 4 (cross-scanner detection) and Table 3 (oracle refusal) — is reproduced from the mutation/benchmark side of this repository (`artifact/code/skillmutator/`, `claims/`).
 
 ## Pre-requisites
 
@@ -13,8 +13,11 @@ This document covers the fine-tuning results (paper Table VI phase-schema ablati
 | ~ 80 GB disk | Tokenizer + base model + LoRA checkpoints |
 
 ```bash
-pip install -e .[all]          # also pulls in the skillmutator package
-cp .env.example .env            # OPENAI_API_KEY, HF_TOKEN, OUTPUT_DIR, ...
+# from the artifact root (Python 3.10-3.12, see README):
+#   ./install.sh --all        # mutation deps + torch/transformers/peft/vllm
+#   cp .env.example .env      # OPENAI_API_KEY, HF_TOKEN, ...
+cd artifact/code/finetuning-framework
+export PYTHONPATH=$PWD/src    # makes `python -m skill_scanner_finetune...` importable
 export OUTPUT_DIR=$PWD/output
 export DATASET_DIR=$PWD/dataset
 ```
@@ -56,7 +59,8 @@ A deterministic refine step (no LLM calls) injects ground-truth Phase 3 + Phase 
 
 The dataset paths and the output directory come from the YAML config
 (`training.output_dir`, `data.train_file`, `data.val_file`); edit the config
-to point at your `${DATASET_DIR}` / `${OUTPUT_DIR}` before launching.
+to point at your `${DATASET_DIR}` / `${OUTPUT_DIR}` before launching, or pass
+`--train-file`, `--val-file` and `--output-dir`.
 
 ```bash
 # Pre-flight smoke test (5 steps) — never skip this; see the note below.
@@ -68,6 +72,10 @@ python scripts/train.py \
 python scripts/train.py \
     --config src/skill_scanner_finetune/finetune/configs/qwen_default.yaml
 ```
+
+The top-level `./run.sh --tier 4` (and this framework's `run.sh`) runs only the
+5-step smoke test on a small corpus as a training demo; the full run above is a
+manual step.
 
 > **Always smoke-test first.** `--max-steps 5` runs the exact training code
 > path for 5 steps. Confirm the log shows `trainable: X / Y (Z%)` (LoRA wrapped
@@ -94,14 +102,14 @@ Defaults match the paper:
 | quantization              | OFF (full bf16) |
 | loss style                | all-token (not assistant-only) |
 
-Training takes ~ 8 h on a single A100 80 GB.
+Training takes ~ 8 h on a single A100 80 GB (budgeted generously; the measured run took 4.5 h).
 
 ### 3. Merge the LoRA adapter
 
 ```bash
 python -m skill_scanner_finetune.finetune.merge_lora \
     --base Qwen/Qwen2.5-Coder-7B-Instruct \
-    --adapter ${OUTPUT_DIR}/qwen2.5-coder-7b-finetuned/final \
+    --lora    ${OUTPUT_DIR}/qwen2.5-coder-7b-finetuned/final \
     --out     ${OUTPUT_DIR}/qwen2.5-coder-7b-finetuned-merged
 ```
 
@@ -136,18 +144,39 @@ Inference defaults (vLLM 0.19.1):
 
 The `--prefill` flag injects the Phase 4 header as an assistant continuation, forcing the model to land at the verdict stage. See [docs/PIPELINE.md](PIPELINE.md) for the mechanism.
 
-### 5. Adjudicate scanner outputs with the GPT-5.4 judge and tabulate
+### 5. Batch-scan the benchmark, adjudicate with the GPT-5.4 judge, and tabulate
+
+The benchmark is the GPT-5.4-oracle `select` set (n=76) produced by the SkillMutator
+pipeline (`../skillmutator`, see its docs/REPRODUCE.md). `run.sh` clears `demo-results/`
+on every pass, so run the gpt-5.4 select pass last (or on its own) before step 5a.
 
 ```bash
-# Adjudicate scan outputs against the published ground truth
-python -m skill_scanner_finetune.analysis.judge \
-       --scan-root ${OUTPUT_DIR}/scan_full
+# 5a. batch scan every mutated iteration with the fine-tuned adapter (vLLM)
+mkdir -p eval && cp -r ../skillmutator/demo-results eval/mutations
+python -m skill_scanner_finetune.finetune.eval_infer_vllm \
+       --model Qwen/Qwen2.5-Coder-7B-Instruct \
+       --lora  ${OUTPUT_DIR}/qwen2.5-coder-7b-finetuned/final \
+       --eval-dir eval --mutations-only
 
-# Build the cross-family fine-tuning comparison (paper Figure 5 / Finding 5)
-python analysis/rq3/scripts/build_tab_finetune.py
+# 5b. adjudicate each scenario at its last normal iteration (same scenario set,
+#     judge prompt and inputs as Table 4) -> judge_summary.csv
+python analysis/judge_scan_tree.py \
+       --scan-root eval --data-root ../skillmutator/demo-data \
+       --oracle gpt-5.4 --mode select --judge-model gpt-5.4 \
+       --out-csv results_rq3/Qwen2.5-Coder-7B-Instruct_D3-prefill/judge_summary.csv
+
+# 5c. build the cross-family comparison (paper Figure 5 / Finding 5)
+python analysis/rq3/scripts/build_tab_finetune.py --root results_rq3
 ```
 
-Outputs land at `analysis/rq3/scripts/outputs/tab_finetune.{csv,tex}`. Expected (within ±2 cases of judge stochasticity, GPT-5.4 judge):
+Repeat 5a-5b per model and variant (`<Model>_base`, `_D3-noprefill`, `_D3-prefill`)
+into `results_rq3/`. `judge_summary.csv` has the columns
+`skill, category, cat_folder, iter, detected, confidence, reason`, the same format as
+the paper's judge files bundled in `claims/claim11_finetune_base_models/data/judge/`
+and `claims/claim04_phase_ablation/data/judge/` (verified at Tier 1). A single scan can
+be judged with `analysis/judge_scan_to_csv.py`.
+
+Outputs land at `results_rq3/outputs/tab_finetune.{csv,tex}`. Expected (within ±2 cases of judge stochasticity, GPT-5.4 judge):
 
 | Model                        | Base    | No-prefill    | Prefill (final)   |
 |------------------------------|---------|---------------|-------------------|
@@ -158,7 +187,7 @@ Outputs land at `analysis/rq3/scripts/outputs/tab_finetune.{csv,tex}`. Expected 
 
 Only Qwen benefits from forced Phase 4 prefill; the other three families score better without it (chat-template incompatibility). See paper §6.4 Finding 5.
 
-### 6. Phase ablation (paper Table VI / Finding 6)
+### 6. Phase ablation (paper Table 6 / Finding 6)
 
 For Finding 6 you re-train with a truncated phase set and re-evaluate:
 
@@ -175,4 +204,4 @@ The expected ablation table is produced by `analysis/rq4/scripts/build_tab_phase
 
 ## Notes on inference-time prefill
 
-The training corpus contains `## Phase 1` through `## Phase 4` markers (see `dataset_builder/formatter_v3.py`); inference forces the **same `## Phase 4: Category Mapping` heading** as the assistant continuation, eliminating the chance that small models will skip directly to free-form text. Empirically this is worth +9.2 pp on Qwen, but negative on Llama, Mistral, and Gemma (chat-template incompatibility); see paper §6.4 Finding 5 and `fig:prefill_delta_comparison`.
+The training corpus contains `## Phase 1` through `## Phase 4` markers (see `dataset_builder/formatter_v3.py`); inference forces the **same `## Phase 4: Category Mapping` heading** as the assistant continuation, eliminating the chance that small models will skip directly to free-form text. Empirically this is worth +9.2 pp on Qwen, but negative on Llama, Mistral, and Gemma (chat-template incompatibility); see paper Figure 5, §6.4 Fine-tuning Effectiveness (Finding 5).

@@ -1,4 +1,4 @@
-"""build_tab2_refusal_summary.py — paper Table III: refusal summary per (oracle, mode).
+"""build_tab2_refusal_summary.py — paper Table 3: refusal summary per (oracle, mode).
 Uses the unified classifications module (which builds from raw mutation JSONs).
 """
 import csv, sys

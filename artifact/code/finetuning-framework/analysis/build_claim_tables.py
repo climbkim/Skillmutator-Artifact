@@ -16,7 +16,7 @@ Measured inputs (this run):
   --judge-csv  positives: judge_summary.csv over mutated (skill,category) pairs
                -> fine-tuned scanner recall (+ per-category recall).
   --neg-csv    negatives: judge_summary.csv over unmodified pairs (optional)
-               -> precision / specificity for the Table XI metrics.
+               -> precision / specificity for the Table 11 metrics.
 
 Usage:
     python analysis/build_claim_tables.py \\
@@ -115,7 +115,7 @@ def main() -> int:
     lbl = args.label
     written = []
 
-    # ---- Figure 6 (fig:rq3_finding1): scanner detection on n=pos -----------
+    # ---- Figure 6: scanner detection on n=pos -----------
     hdr = ["scanner", "recall_pct", "n", "status", "source"]
     rows = [
         ["skill-security-scan", "", n_pos, FULL, lbl],
@@ -128,7 +128,7 @@ def main() -> int:
     ]
     written.append(_write(args.out_dir, "figure6", hdr, rows))
 
-    # ---- Table XI (tab:cell_metrics): 5 classifier metrics -----------------
+    # ---- Table 11: 5 classifier metrics -----------------
     if have_neg:
         precision = 100.0 * tp / (tp + fp) if (tp + fp) else 0.0
         specificity = 100.0 * tn / (tn + fp) if (tn + fp) else 0.0
@@ -149,7 +149,7 @@ def main() -> int:
                      MEAS if (m == "Recall (TPR)" or have_neg) else FULL, lbl])
     written.append(_write(args.out_dir, "table11", hdr, rows))
 
-    # ---- Table VIII (tab:cost_envelope): per-scan cost ---------------------
+    # ---- Table 8: per-scan cost ---------------------
     ups = args.qwen_usd_per_skill
     upd = (ups / (recall / 100.0)) if recall > 0 else ""
     hdr = ["scanner", "usd_per_skill", "recall_pct", "usd_per_detection", "status", "source"]
@@ -162,7 +162,7 @@ def main() -> int:
     ]
     written.append(_write(args.out_dir, "table8", hdr, rows))
 
-    # ---- Table VI (tab:finetune_rq2): four-phase schema ablation -----------
+    # ---- Table 6: four-phase schema ablation -----------
     # demo fills only the final "+prefill" row (the released adapter == prefill).
     hdr = ["schema", "detection_rate_pct", "status", "source"]
     rows = [
@@ -175,7 +175,7 @@ def main() -> int:
     ]
     written.append(_write(args.out_dir, "table6", hdr, rows))
 
-    # ---- Figure 5 (fig:prefill_delta_comparison): 4 base families ----------
+    # ---- Figure 5: 4 base families ----------
     hdr = ["model", "base_pct", "no_prefill_pct", "prefill_pct", "status", "source"]
     rows = [
         ["Qwen2.5-Coder-7B-Instruct", "", "", f"{recall:.1f}", MEAS, lbl],
@@ -185,7 +185,7 @@ def main() -> int:
     ]
     written.append(_write(args.out_dir, "figure5", hdr, rows))
 
-    # ---- Table VII (tab:wild_eval): in-the-wild ClawHub (needs corpus) -----
+    # ---- Table 7: in-the-wild ClawHub (needs corpus) -----
     hdr = ["stratum", "accuracy_pct", "status", "source"]
     rows = [
         ["clean", "", FULL, lbl],
@@ -198,7 +198,7 @@ def main() -> int:
     ]
     written.append(_write(args.out_dir, "table7", hdr, rows))
 
-    # ---- Table X (tab:baseline_aggregate): finding counts on unmodified ----
+    # ---- Table 10: finding counts on unmodified ----
     # demo fills the fine-tuned-scanner "skills-with-finding" count if a negative
     # (unmodified) scan was provided.
     qwen_skills = f"{fp}/{len(neg)}" if have_neg else ""
@@ -215,7 +215,7 @@ def main() -> int:
     ]
     written.append(_write(args.out_dir, "table10", hdr, rows))
 
-    # ---- per-category recall (positive side of Table XI) -------------------
+    # ---- per-category recall (positive side of Table 11) -------------------
     if pcat:
         per = defaultdict(lambda: [0, 0])
         for r in pos:
@@ -231,7 +231,7 @@ def main() -> int:
                 w.writerow([c, h, t, f"{100.0*h/t:.1f}" if t else "0.0"])
 
     print(f"[build_claim_tables] label={lbl}  positives n={n_pos} detected={tp} recall={recall:.1f}%"
-          + (f"  negatives n={len(neg)} fp={fp}" if have_neg else "  (no negatives -> Table XI/X metrics skeleton)"))
+          + (f"  negatives n={len(neg)} fp={fp}" if have_neg else "  (no negatives -> Tables 11/10 metrics skeleton)"))
     for rel in written:
         print(f"  wrote {rel}")
     print(f"[build_claim_tables] output root: {args.out_dir}")

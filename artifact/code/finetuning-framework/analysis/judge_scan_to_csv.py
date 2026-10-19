@@ -18,7 +18,7 @@ Usage:
         --scan-file    ${OUTPUT_DIR}/scan/scan.md \\
         --skill        markdown-link-checker \\
         --category     "Data Exfiltration" \\
-        --injected-file experiments/sample/skill_mutated/SKILL.md \\
+        --injected-file <mutated-skill-dir>/SKILL.md \\
         --out-csv      ${OUTPUT_DIR}/scan/judge_summary.csv
 """
 from __future__ import annotations
@@ -44,7 +44,7 @@ def main() -> int:
     # analysis/ is a top-level package at the framework root (judge.py + paths.py
     # + parsers.py); put the framework root on the path and import from there.
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-    from analysis.judge import judge_call  # noqa: E402
+    from analysis.judge import JudgeError, judge_call  # noqa: E402
 
     scan_text = Path(args.scan_file).read_text(encoding="utf-8")
     injected = (Path(args.injected_file).read_text(encoding="utf-8")
@@ -53,8 +53,16 @@ def main() -> int:
     kw = {}
     if args.judge_model:
         kw["model"] = args.judge_model
-    verdict = judge_call(skill=args.skill, category=args.category, title=args.title,
-                         disguise="", injected_snippet=injected, scan_text=scan_text, **kw)
+    try:
+        verdict = judge_call(skill=args.skill, category=args.category, title=args.title,
+                             disguise="", injected_snippet=injected, scan_text=scan_text, **kw)
+    except JudgeError as e:
+        # No row: a failed judge must not be recorded as MISSED.
+        print(f"[judge] error: {e}", file=sys.stderr)
+        if e.fatal:
+            print("        Use a judge model this API key can access (--judge-model); "
+                  "the paper uses gpt-5.4.", file=sys.stderr)
+        return 1
 
     detected = bool(verdict.get("detected"))
     label = "DETECTED" if detected else "MISSED"

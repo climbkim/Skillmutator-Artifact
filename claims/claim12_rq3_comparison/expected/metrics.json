@@ -1,6 +1,6 @@
 {
-  "paper_element": "Figure 6 (fig:rq3_finding1) — scanner detection on the GPT-5.4 oracle benchmark (n=76, select mode, GPT-5.4 judge). Per scanner: '<name>/det' = detected count, '<name>/rate' = detection rate (%). Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
-  "source": "Skillmutator.tex fig:rq3_finding1. Rates recomputed as 100 * detected / n with n read from the golden.",
+  "paper_element": "Figure 6 (§6.4 Fine-tuning Effectiveness) — scanner detection on the GPT-5.4 oracle benchmark (n=76, select mode, GPT-5.4 judge). Per scanner: '<name>/det' = detected count, '<name>/rate' = detection rate (%). Machine-readable paper golden; human-readable view is expected/PAPER_CITED_VALUES.md.",
+  "source": "paper (camera-ready), Figure 6, §6.4 Fine-tuning Effectiveness. Rates recomputed as 100 * detected / n with n read from the golden.",
   "n": 76,
   "metrics": {
     "skill-security-scan/det": 6,

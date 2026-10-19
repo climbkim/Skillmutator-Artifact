@@ -33,17 +33,25 @@ curl -s http://localhost:8000/v1/models | python -m json.tool   # expect "id": "
 
 ## Step 2 — Smoke test (one suspicious + one clean skill)
 
-Point the smoke-test script at the served endpoint and two skill directories
+Run the released scanner CLI (`artifact/code/finetuning-framework/scripts/run_scanner.py`,
+from the artifact root) against the served endpoint, once per skill directory
 (each containing a `SKILL.md` plus any `scripts/` / `references/`):
 
 ```bash
-python smoke_test.py \
-    --base-url http://localhost:8000/v1 \
-    --model scanner \
-    --suspicious-dir <path>/suspicious_skill/files \
-    --clean-dir      <path>/clean_skill/files \
-    --out smoke_test_results.json
+FT=artifact/code/finetuning-framework
+for d in <path>/suspicious_skill/files <path>/clean_skill/files; do
+  python $FT/scripts/run_scanner.py "$d" \
+      --backend vllm \
+      --base-url http://localhost:8000/v1 \
+      --model scanner \
+      --max-new-tokens 2048 \
+      -o smoke_test_results/
+done
 ```
+
+`run_scanner.py` sends the paper's sampling settings by default (Phase 4 prefill,
+`temperature=0`, `frequency_penalty=0.3`); `--max-new-tokens 2048` adds the
+completion cap used for the ClawHub scans (see Notes).
 
 Expected: ~10-30s per skill. The suspicious skill's output should contain a
 `## Phase 4: Category Mapping` heading followed by one or more
@@ -52,10 +60,10 @@ vocabulary; the clean skill should flag few or none.
 
 ## Step 3 — Full scan
 
-Iterate the smoke script (or a batch variant) over each skill's `files/`
-directory, saving one report per skill, then run a judge comparing the
-scanner's Phase 4 categories against the ClawHub `audit.json` ground truth (via
-the finding-code mapping table under the corpus directory).
+Run `run_scanner.py` the same way over each skill's `files/` directory, saving
+one report per skill, then run a judge comparing the scanner's Phase 4
+categories against the ClawHub `audit.json` ground truth (via the finding-code
+mapping table under the corpus directory).
 
 ## Failure modes
 

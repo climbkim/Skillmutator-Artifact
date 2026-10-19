@@ -1,8 +1,8 @@
-# Table VI — Four-phase schema ablation (Qwen2.5-Coder-7B)
+# Table 6 — Four-phase schema ablation (Qwen2.5-Coder-7B)
 
 ## (1) Paper location
 
-- **LaTeX label**: `\label{tab:finetune_rq2}`
+- **Paper location**: Table 6, §6.4 Fine-tuning Effectiveness (Finding 6)
 - **Caption**: "Four-phase schema ablation on Qwen2.5-Coder-7B-Instruct."
 - **Finding 6**: all four phases contribute to detection.
 

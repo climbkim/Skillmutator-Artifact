@@ -1,4 +1,4 @@
-# Paper-cited Values — Per-model base-vs-fine-tuned detection (Finding 5, `fig:prefill_delta_comparison`)
+# Paper-cited Values — Per-model base-vs-fine-tuned detection (Finding 5)
 
 Detection rate (%) of four base open-weight models and their best fine-tuned
 variants on the 76-case SkillMutator benchmark, under the GPT-5.4 judge. The

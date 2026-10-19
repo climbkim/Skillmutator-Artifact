@@ -1,6 +1,6 @@
 # LLM-Judge Specification (Claude-as-Judge)
 
-Mirrors the paper's GPT-5.4 judge (`Appendix A.1, Fig. 6`) but for the
+Mirrors the paper's GPT-5.4 judge (`Appendix A.1, Figure 7`) but for the
 ClawHub in-the-wild evaluation:
   - **input** : (scanner_output, ClawHub ground-truth evidence)
   - **output**: structured JSON verdict per skill
@@ -43,8 +43,8 @@ For a **clean** ground-truth skill:
 
 1. Read ClawHub `llm_summary` (the headline) and the parsed `llm_findings`
    codes (SDI-2 = persistence/self-mod, SQP-1 = broad activation,
-   SQP-2 = under-disclosed, SSD-3 = data retention/exfil, etc.). See
-   [_finding_code_mapping.md](../clawhub_suspicious/_finding_code_mapping.md).
+   SQP-2 = under-disclosed, SSD-3 = data retention/exfil, etc.; codes as
+   published by ClawHub in each skill's audit).
 2. Read scanner output **start to end** (including Uncategorized and any
    Phase 2/1/0 narrative — the model often emits findings outside Phase 3).
 3. Decide whether scanner's text describes the same risk evidence cited

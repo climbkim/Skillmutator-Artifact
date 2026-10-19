@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+# AUTHOR-SIDE HARNESS, kept for transparency: it expects the author's Review_4 layout
+# and the unreleased mutation tree, so it is not runnable as shipped.
+# REVIEW4 = the author's Review_4/ working folder: this file sat in Review_4/harness/,
+# with Review_4/scanners/ (third-party scanner checkouts) and Review_4/results/ beside it,
+# and the mutation tree in the sibling folder skillmutator-github/dataset/<oracle>/result/.
 """Apply external (third-party) scanners to the SkillMutator benchmark.
 
 Target scanners (no API key needed, static):

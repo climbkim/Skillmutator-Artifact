@@ -1,6 +1,6 @@
 """build_tab_iter_trajectory_per_oracle.py — Analysis 2 split into 3 oracle-
 specific tables. Each table shows SS, Snyk, and the oracle's matched LLM
-scanner across 5 iters (carry-forward, denom = iter_0 normal scenarios).
+scanner across 5 iters (carry-forward, denom = evaluable scenarios).
 
 Outputs (one CSV per oracle + a pretty-printed combined view):
   outputs/tab_iter_trajectory_gpt-4o-mini.csv

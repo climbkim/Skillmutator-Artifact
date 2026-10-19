@@ -168,7 +168,7 @@ def main():
         llm = LLM(
             model=args.model,
             dtype="bfloat16",
-            max_model_len=16384,
+            max_model_len=32768,
             trust_remote_code=True,
             gpu_memory_utilization=0.85,
             enable_lora=True,
@@ -180,7 +180,7 @@ def main():
         llm = LLM(
             model=args.model,
             dtype="bfloat16",
-            max_model_len=16384,
+            max_model_len=32768,
             trust_remote_code=True,
             gpu_memory_utilization=0.85,
         )
@@ -188,7 +188,7 @@ def main():
     sampling_params = SamplingParams(
         max_tokens=args.max_new_tokens,
         temperature=0.0,
-        repetition_penalty=1.1,
+        frequency_penalty=0.3,   # paper scans: greedy + frequency_penalty 0.3 (not repetition_penalty)
     )
 
     def make_prompt(job: dict) -> str:

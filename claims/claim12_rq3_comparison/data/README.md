@@ -2,9 +2,8 @@
 
 ## (1) Paper location
 
-- **LaTeX label**: `\label{fig:rq3_finding1}`
-- **Paper location**: §6.4, after Finding 4
-- **Caption**: "Detection rate (%) on the GPT-5.4 oracle benchmark ($n{=}76$, `select` mode, GPT-5.4 judge). Rows are grouped into proprietary scanners, open-weight baselines, and the fine-tuned Qwen2.5-Coder-7B-Instruct scanner."
+- **Paper location**: Figure 6, §6.4 Fine-tuning Effectiveness (Finding 4)
+- **Caption**: "Detection rate (%) on the GPT-5.4 oracle benchmark ($n{=}76$)."
 
 ## (2) PAPER_TARGET_VALUES
 
@@ -22,14 +21,14 @@ Summary (8 scanners, n=76, select mode, GPT-5.4 judge):
 ## (3) Data source
 
 8 scanner detection rates are cross-sourced from:
-- Rule-based: paper Table III (`table3_cross_scanner_matrix/`), GPT-5.4 oracle column
-- Proprietary LLM: paper Table III, GPT-5.4 oracle column
-- Qwen2.5-Coder-7B-Instruct base/ours: paper Table VI (`table6_finetune_base_models/`)
-- Final headline 88.16% also appears in paper Table VII (`table7_phase_ablation/` final row "+prefill")
+- Rule-based: paper Table 4 (`claims/claim02_cross_scanner_detection/`), GPT-5.4 oracle column
+- Proprietary LLM: paper Table 4, GPT-5.4 oracle column
+- Qwen2.5-Coder-7B-Instruct base/ours: paper Figure 5 (`claims/claim11_finetune_base_models/`)
+- Final headline 88.16% also appears in paper Table 6 (`claims/claim04_phase_ablation/`, final row "+prefill")
 
 ### Raw files (raw/)
 - `scanners.csv` — 8 scanners × (label, detected, rate_pct, group)
-- `scan_pointers.md` — canonical paths to per-scanner scan.md trees (in `table3_*/`, `table6_*/`, the source scan tree not redistributed). Figure 6 is a visualization of derived aggregates, not a primary measurement, so per-skill scan trees are not duplicated here.
+- `raw/scan_pointers.md` — per-scanner source of each row (scan trees not redistributed) and the cross-check paths to the claim02, claim04 and claim11 aggregates. Figure 6 is a visualization of derived aggregates, not a primary measurement, so per-skill scan trees are not duplicated here.
 
 ### Figure files (top-level)
 - `rq3_finding1.{pdf,png}` — paper canonical figure
@@ -37,17 +36,15 @@ Summary (8 scanners, n=76, select mode, GPT-5.4 judge):
 ## (4) Reproduction commands
 
 ```bash
-cd figure8_rq3_finetune_comparison
+bash ../run.sh                           # export + verify Figure 6 values
 
-# 1. Export SCANNERS table to CSV
+# Export the SCANNERS table to CSV
 python scripts/export_scanners_csv.py
 # → writes raw/scanners.csv
 
-# 2. Render 4 candidate visualizations
+# Render the figure
 python scripts/plot_candidates.py
 # → writes derived/candidate_{1..4}.{pdf,png}
-
-# 3. (Manual) choose canonical figure → copy to rq3_finding1.{pdf,png}
 ```
 
 ## (5) Dependencies

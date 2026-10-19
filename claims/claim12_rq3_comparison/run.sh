@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+source "$(dirname "$0")/../_pyenv.sh"
 cd "$(dirname "$0")/data"
 
 echo "== export scanners table (raw/scanners.csv) =="

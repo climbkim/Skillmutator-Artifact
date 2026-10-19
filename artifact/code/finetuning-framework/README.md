@@ -40,13 +40,14 @@ this repository (`artifact/code/skillmutator/`).
 ## Install
 
 ```bash
-git clone https://github.com/climbkim/SkillMutator.git
-cd SkillMutator/finetuning-framework
-pip install -e .[all]                # pulls in the skillmutator package
-cp .env.example .env                  # then edit OPENAI_API_KEY, HF_TOKEN, OUTPUT_DIR
+# from the artifact root (Python 3.10-3.12)
+./install.sh --all                   # mutation deps + torch/transformers/peft/vllm
+cp .env.example .env                 # then edit OPENAI_API_KEY, HF_TOKEN
+cd artifact/code/finetuning-framework
+export PYTHONPATH=$PWD/src           # makes `python -m skill_scanner_finetune...` importable
 ```
 
-Requirements: Python 3.10+, an A100 80 GB (or equivalent) for training, and a
+Requirements: Python 3.10-3.12, an A100 80 GB (or equivalent) for training, and a
 HuggingFace token for downloading the base model.
 
 ## Quickstart
@@ -67,7 +68,7 @@ python scripts/train.py \
 # 4. Merge the LoRA adapter into a serving checkpoint.
 python -m skill_scanner_finetune.finetune.merge_lora \
        --base Qwen/Qwen2.5-Coder-7B-Instruct \
-       --adapter ${OUTPUT_DIR}/qwen2.5-coder-7b/final \
+       --lora    ${OUTPUT_DIR}/qwen2.5-coder-7b/final \
        --out     ${OUTPUT_DIR}/qwen2.5-coder-7b-merged
 
 # 5. Serve via vLLM and scan a skill.

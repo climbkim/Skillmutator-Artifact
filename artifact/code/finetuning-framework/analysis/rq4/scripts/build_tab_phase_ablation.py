@@ -1,8 +1,8 @@
-"""build_tab_phase_ablation.py — paper Finding 3 (four-phase schema ablation).
+"""build_tab_phase_ablation.py — paper Finding 6 (four-phase schema ablation, Table 6).
 
 Aggregates per-variant `judge_summary.csv` into the cumulative phase-ablation
-table (paper Table V; headline final value is 88.16 % = 67/76 with refine +
-forced Phase 4 prefill, see paper §6.4 Finding 3):
+table (paper Table 6; headline final value is 88.16 % = 67/76 with refine +
+forced Phase 4 prefill, see paper §6.4 Fine-tuning Effectiveness, Finding 6):
 
     P1                          -> 1.32 % (1/76)
     + P2                        -> 25.00 %
@@ -59,7 +59,7 @@ def load_rate(csv_path: Path):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", required=True,
-                    help="Directory containing the per-variant Finetune-RQ2 folders.")
+                    help="Directory holding one <variant>/judge_summary.csv per ablation variant.")
     ap.add_argument("--out-csv", default="outputs/tab_phase_ablation.csv")
     ap.add_argument("--out-tex", default="outputs/tab_phase_ablation.tex")
     args = ap.parse_args()
@@ -104,8 +104,7 @@ def main():
     L = []
     L.append(r"\begin{table}[tb]")
     L.append(r"\centering")
-    L.append(r"\caption{Four-phase schema ablation on Qwen2.5-Coder-7B-Instruct (paper Finding 3, $n=76$).}")
-    L.append(r"\label{tab:finetune_rq2}")
+    L.append(r"\caption{Four-phase schema ablation on Qwen2.5-Coder-7B-Instruct (paper Finding 6, $n=76$).}")
     L.append(r"\begin{tabular}{lrrr}")
     L.append(r"\toprule")
     L.append(r"\textbf{Variant} & \textbf{Detected} & \textbf{Rate (\%)} & \textbf{$\Delta$pp} \\")
@@ -123,7 +122,7 @@ def main():
     # Pretty print
     print(f"[saved] {out_csv}")
     print(f"[saved] {out_tex}\n")
-    print(f"=== Finding 3: phase ablation (n=76) ===")
+    print(f"=== Finding 6: phase ablation (n=76) ===")
     print(f"{'Variant':<30}{'Det/n':>10}{'Rate':>10}{'Delta':>10}")
     print("-" * 60)
     for r in rows:

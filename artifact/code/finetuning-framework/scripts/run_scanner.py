@@ -35,14 +35,17 @@ def main() -> int:
                     help="OpenAI-compatible endpoint (e.g. http://localhost:8000/v1).")
     ap.add_argument("-m", "--model", required=True,
                     help="Model id served by the endpoint.")
-    ap.add_argument("--prefill", default="## Phase 4: Category Mapping",
-                    help="Forced Prefix Pre-filling heading. Must match the corpus marker.")
+    ap.add_argument("--prefill", default=None,
+                    help="Forced Prefix Pre-filling heading (default: the scanner's "
+                         "'## Phase 4: Category Mapping' marker). Must match the corpus marker.")
     ap.add_argument("--no-prefill", action="store_true",
                     help="Disable Forced Prefix Pre-filling (falls back to a plain call).")
     ap.add_argument("-o", "--output-dir", default=None,
                     help="Where to write the scan report.")
     ap.add_argument("-t", "--max-tokens", type=int, default=None,
-                    help="Override the per-call token cap.")
+                    help="Per-request INPUT token budget used to chunk large skills.")
+    ap.add_argument("--max-new-tokens", type=int, default=None,
+                    help="Completion-token cap (default: none; the ClawHub scans used 2048).")
     ap.add_argument("--temperature", type=float, default=0.0,
                     help="Sampling temperature (default 0).")
     ap.add_argument("--frequency-penalty", type=float, default=0.3,
@@ -61,9 +64,13 @@ def main() -> int:
     if args.base_url:   fwd += ["-u", args.base_url]
     if args.output_dir: fwd += ["-o", args.output_dir]
     if args.max_tokens: fwd += ["-t", str(args.max_tokens)]
-    if args.no_prefill: fwd += ["--no-prefill"]
-    if args.prefill and not args.no_prefill:
+    if args.max_new_tokens: fwd += ["--max-new-tokens", str(args.max_new_tokens)]
+    if args.no_prefill or args.backend == "openai-compat":
+        fwd += ["--no-prefill"]
+    elif args.prefill:
         fwd += ["--prefill", args.prefill]
+    fwd += ["--temperature", str(args.temperature),
+            "--frequency-penalty", str(args.frequency_penalty)]
 
     sys.argv = fwd
     runpy.run_path(str(scanner_py), run_name="__main__")

@@ -1,4 +1,4 @@
-"""build_table4.py — assemble Table III (refusal behavior, 3 GPT oracles).
+"""build_table4.py — assemble Table 3 (refusal behavior, 3 GPT oracles).
 
 Aggregates per-iter counts (iter_0..4) for each oracle from:
   - derived/tab2_refusal_per_iter.csv (GPT oracles, all-iter)
